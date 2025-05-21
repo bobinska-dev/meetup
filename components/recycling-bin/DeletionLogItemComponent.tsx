@@ -1,17 +1,36 @@
 // DeletionLogItemComponent.tsx
+import { SanityUser } from '@sanity/client'
 import { RestoreIcon } from '@sanity/icons'
 import { Card, Flex, Stack, Text } from '@sanity/ui'
-import { ComponentType } from 'react'
-import { IntentButton, ObjectItemProps } from 'sanity'
+import { ComponentType, useEffect, useState } from 'react'
+import { IntentButton, ObjectItemProps, useClient } from 'sanity'
+import { apiVersion } from '../../lib/api'
 import { LogItem } from '../../schemaTypes/singletons/deletedDocBinDocument'
+import User from './User'
 
 /** ### Array Item Component for each log entry
  *
  * with Intent Button to open the document and restore it
  */
-export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> = (props) => {
+export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> = async (props) => {
   // * Get the value from the props
   const value = props.value
+  // * Set up user client to get the user name of the user who deleted the document
+  const client = useClient({ apiVersion }).withConfig({ withCredentials: true })
+  const [user, setUser] = useState<SanityUser | undefined>()
+
+  useEffect(() => {
+    // * Get the user name of the user who deleted the document
+    value.deletedBy &&
+      client.users
+        .getById(value.deletedBy)
+        .then((user) => {
+          setUser(user)
+        })
+        .catch((error) => {
+          console.error('Error fetching user:', error)
+        })
+  }, [])
 
   // * Format the date to be nice and universal
   const date = new Date(value.deletedAt)
@@ -49,6 +68,7 @@ export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> =
           <Text muted size={1}>
             Deleted: {formattedDate}
           </Text>
+          {user && <User {...user} />}
           <Text muted size={0}>
             ID: {value.docId}, Revision: {value._key as string}
           </Text>

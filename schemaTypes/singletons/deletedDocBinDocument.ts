@@ -18,6 +18,7 @@ export interface LogItem extends ObjectItem {
   deletedAt: string
   type: string
   documentTitle: string | 'Unknown 🥲'
+  deletedBy?: string
 }
 
 export default defineType({
@@ -80,6 +81,11 @@ export default defineType({
               title: 'Document Title',
               type: 'string',
               validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'deletedBy',
+              title: 'Deleted By',
+              type: 'string',
             }),
           ],
           components: {

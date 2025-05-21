@@ -34,6 +34,7 @@ export const DeletionLogInputComponent: ComponentType<ArrayOfObjectsInputProps> 
 
   // * Create an array of items to unset for documents that were restored
   const itemsToUnset = logs?.map((item) => `deletedDocLogs[docId == "${item}"]`)
+
   // * This will clean up the logs array by removing the documents that were restored
   // a unaltered log of all published documents that were deleted at some point are in the `deletedDocIds` array
   useEffect(() => {
