@@ -22,17 +22,17 @@
   "dependencies": {
     "@sanity/vision": "^3.92.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "sanity": "^3.92.0",
-    "styled-components": "^6.1.8"
+    "styled-components": "^6.1.18"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
-    "@types/react": "^19.0.10",
-    "eslint": "^9.22.0",
+    "@types/react": "^19.1.8",
+    "eslint": "^9.28.0",
     "prettier": "^3.5.3",
-    "typescript": "^5.1.6"
+    "typescript": "^5.8.3"
   },
   "prettier": {
     "semi": false,
