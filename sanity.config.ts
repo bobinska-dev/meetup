@@ -1,18 +1,23 @@
-import { visionTool } from '@sanity/vision'
 import { defineConfig } from 'sanity'
-import { structureTool } from 'sanity/structure'
+import { projectId } from './lib/api'
+import plugins from './plugins'
 import { schemaTypes } from './schemaTypes'
+import { templates } from './templates'
 
 export default defineConfig({
   name: 'default',
   title: 'Demo',
 
-  projectId: 'xonzamf8',
-  dataset: 'production',
+  projectId,
+  dataset: 'structure-showroom',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: plugins,
 
   schema: {
     types: schemaTypes,
+    templates: templates,
+  },
+  search: {
+    strategy: 'groq2024',
   },
 })

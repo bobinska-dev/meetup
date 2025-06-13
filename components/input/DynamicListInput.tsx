@@ -4,15 +4,23 @@ import { uuid } from '@sanity/uuid'
 import groq from 'groq'
 import { ComponentType, useEffect, useMemo, useState } from 'react'
 import { Subscription } from 'rxjs'
-import { ArrayOfObjectsInputProps, TitledListValue, useClient, useCurrentUser } from 'sanity'
+import {
+  ArrayOfObjectsInputProps,
+  TitledListValue,
+  useClient,
+  useCurrentUser,
+  useFormValue,
+} from 'sanity'
 import { useRouter, useRouterState } from 'sanity/router'
 import { RouterPanes } from 'sanity/structure'
+import { dataset } from '../../lib/api'
 import LoadingIndicator from '../LoadingIndicator'
 
 const DynamicListInput: ComponentType<ArrayOfObjectsInputProps> = (props) => {
   // * Initialize the Studio client
   const client = useClient({ apiVersion: '2025-03-01' }).withConfig({
     perspective: 'previewDrafts',
+    dataset: dataset,
   })
 
   // * Initialize the router and get the pane groups
@@ -23,6 +31,8 @@ const DynamicListInput: ComponentType<ArrayOfObjectsInputProps> = (props) => {
     () => (routerState?.panes || []) as RouterPanes,
     [routerState?.panes],
   )
+  // * Get the language
+  const documentLanguage = useFormValue(['language'])
 
   // * Get the current user
   const currentUser = useCurrentUser()
@@ -34,31 +44,40 @@ const DynamicListInput: ComponentType<ArrayOfObjectsInputProps> = (props) => {
   // * Fetch and subscribe to the listOption documents
   let subscription: Subscription
   useEffect(() => {
-    const query = groq`*[_type == "listOption"] | order(title asc) { "_key": _id, title, value, "_type": 'dynamicListItem' }`
+    const query = groq`*[_type == "listOption"] | order(title asc) {  
+      "title": coalesce(
+        internationalisedTitle[ _key == $documentLanguage ][0].value,
+        title,
+        "No title or translation available"
+      ), "_type": 'dynamicListItem', "value": { "_ref": _id, _type} }`
 
+    const params = {
+      documentLanguage,
+    }
     const listen = () => {
       subscription = client
-        .listen(query, {
+        .listen(query, params, {
           visibility: 'query',
           tag: `dynamic-list-input-${props.id}`,
           includeResult: false,
         })
         .subscribe(() =>
-          client.fetch(query).then((data) => {
+          client.fetch(query, params).then((data) => {
             setListOptions(data)
             setLoading(false)
           }),
         )
     }
 
-    client
-      .fetch(query)
-      .then((data) => {
-        setListOptions(data)
-        setLoading(false)
-      })
-      .then(listen)
-      .finally(() => setLoading(false))
+    documentLanguage &&
+      client
+        .fetch(query, params)
+        .then((data) => {
+          setListOptions(data)
+          setLoading(false)
+        })
+        .then(listen)
+        .finally(() => setLoading(false))
 
     // * Cleanup
     // Never forget to unsubscribe from the listener
@@ -67,7 +86,7 @@ const DynamicListInput: ComponentType<ArrayOfObjectsInputProps> = (props) => {
         subscription.unsubscribe()
       }
     }
-  }, [])
+  }, [documentLanguage])
 
   if (loading) return <LoadingIndicator />
 
@@ -106,6 +125,7 @@ const DynamicListInput: ComponentType<ArrayOfObjectsInputProps> = (props) => {
             list: listOptions,
           },
         },
+        // TODO: Add better onChange handler (at the moment any change is overridding the whole array and we want to be more granular)
       })}
       {isAdmin && (
         <Flex gap={4} paddingY={2} align={'center'} justify={'flex-start'}>
