@@ -102,18 +102,20 @@ Check out [rebasing-releases-and-drafts branch](https://github.com/bobinska-dev/
 When drafts and release versions exist and are edited at the same time, they can diverge from each other in unexpected ways. When the release is then published, the existing draft can become out of sync. Those out of sync drafts can then override existing release-based and already published changes -> `lastPublishedAt` values could help with simple comparisons.
 <br/>
 
-| ![image](https://github.com/user-attachments/assets/7b4a15e7-2080-44c7-92c1-370a84cc7c80) |
+| ![image](https://github.com/user-attachments/assets/a5a2915f-1561-4895-b78d-d9c72c2a6d7e) |
 | :------------------------------------------------------------------------------------------------------------------------------------: |
 |                  _Drafts and releases can get out of sync - and there is a simple soluiton to make sure unintentional changes are published_                   |
 <br/>
 This branch shows how to use the `lastPublishedAt` value to rebase the draft with the latest published document. This is a very useful solution for teams that work with drafts and releases at the same time.
+
+The solution uses a [function](https://www.sanity.io/docs/compute-and-ai/functions-introduction), [blueprints](https://www.sanity.io/docs/compute-and-ai/functions-introduction#k6757f4985012) and [an extended `publish` document action](https://www.sanity.io/docs/studio/document-actions#k9f3cecbfeaa1) to achieve this.
+**Make sure to read the documentation before, so you know what functions and blueprints do - and how to deploy those in your own projects.**
 
 | ![image](https://github.com/user-attachments/assets/353aebc5-5f89-40f0-91d3-16cf4727a89a) |
 | :------------------------------------------------------------------------------------------------------------------------------------: |
 |                  _Example from the studio - and preview of the solution in action_                   |
 <br/>
 <br/>
-
 #### Specials
 
 It's worth hovering over some of the parts of the custom components because there are a lot of user-shortcuts and hidden features.
