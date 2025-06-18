@@ -1,8 +1,5 @@
 # Saskia Bobinska's demo Studio
 
-In this repo, you will find a couple of interesting studio solutions - Each branch has its own focus.
-If you want to see the most extensive one (where all other branches come together), please skip to [Personalisation](#personalisation).
-
 ## Branches
 
 ### Rebasing drafts with release published documents
