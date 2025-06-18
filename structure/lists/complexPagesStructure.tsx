@@ -1,5 +1,8 @@
+import { TbBrowser } from 'react-icons/tb'
 import { StructureBuilder, StructureResolverContext } from 'sanity/structure'
 import { homeListItem } from './homeListItem'
+import { internationalisedPagesListItem } from './iternationalisedPagesListItem'
+import { navPagesList } from './navPagesList'
 
 export const complexPagesStructure = async (
   S: StructureBuilder,
@@ -16,48 +19,26 @@ export const complexPagesStructure = async (
 
   return S.listItem()
     .title('Pages')
+    .icon(TbBrowser)
     .child(
       S.list()
         .title('Pages')
         .menuItems(
+          /* this adds the initial value templates for each language */
           S.menuItemsFromInitialValueTemplateItems(
             languages?.map((language) =>
               S.initialValueTemplateItem('internationalised-page', {
                 language: language.id,
               })
                 .title(language.title + ' Page')
-                .serialize({ path: ['pages', 'allPages'] }),
+                .serialize(),
             ),
           ),
-          /*           languages?.map((language) => {
-            console.log(language)
-            return (
-              S.menuItem()
-                .icon(
-                  <Box>
-                    <Text>{language.id.toLocaleUpperCase()}</Text>
-                  </Box>,
-                )
-                .title(`${language.title} Page`)
-                /*               .action({
-
-              })
-                .intent({
-                  type: 'create',
-                  params: {
-                    type: 'page',
-                    template: 'internationalised-page',
-                    language: language.id,
-                  },
-                })
-                .showAsAction(false)
-                .serialize()
-            )
-          }),  */
         )
         .items([
           S.listItem()
             .title('All pages')
+            .icon(TbBrowser)
             .child(
               S.documentTypeList('page')
                 .title('All Pages')
@@ -74,10 +55,14 @@ export const complexPagesStructure = async (
                   ),
                 ),
             ),
-          // .initialValueTemplates([]),
-          S.divider().title('Navigation settings'),
+
+          S.divider().title('Page structure in settings'),
           // * Home
           await homeListItem(S, context),
+          // * Pages in Menu
+          navPagesList(S, context),
+          S.divider().title('Internationalised Pages'),
+          internationalisedPagesListItem(S, context),
         ]),
     )
 }

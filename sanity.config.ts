@@ -1,4 +1,5 @@
 import { defineConfig } from 'sanity'
+import documentActions from './documentActions'
 import { projectId } from './lib/api'
 import plugins from './plugins'
 import { schemaTypes } from './schemaTypes'
@@ -17,6 +18,11 @@ export default defineConfig({
     types: schemaTypes,
     templates: templates,
   },
+
+  document: {
+    actions: (prev, context) => documentActions(prev, context),
+  },
+
   search: {
     strategy: 'groq2024',
   },

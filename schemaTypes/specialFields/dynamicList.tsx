@@ -1,4 +1,4 @@
-import { TagIcon } from '@sanity/icons'
+import { TbTag } from 'react-icons/tb'
 import { defineArrayMember, defineField } from 'sanity'
 import DynamicListInput from '../../components/input/DynamicListInput'
 
@@ -17,7 +17,7 @@ export default (group: string[] | undefined) =>
       defineArrayMember({
         type: 'object',
         name: 'dynamicListItem',
-        icon: TagIcon,
+        icon: TbTag,
         fields: [
           /* {
   "title": "List Option 1",

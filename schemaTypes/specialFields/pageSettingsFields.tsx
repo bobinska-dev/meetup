@@ -26,6 +26,7 @@ export const pageSettingsFields = [
     description: 'This field is automatically set when the page is first published.',
     type: 'datetime',
     readOnly: true,
+    hidden: true,
     group: 'settings',
   }),
 
@@ -37,6 +38,7 @@ export const pageSettingsFields = [
       'This field is automatically set when the page is published. It can be used to check the sync status of drafts after scheduled publishing (with Content Releases especially).',
     type: 'datetime',
     readOnly: true,
+    hidden: true, // Hide this field from the editor
     group: 'settings',
   }),
 ]

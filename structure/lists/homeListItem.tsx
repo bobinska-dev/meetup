@@ -1,5 +1,5 @@
 import { Flex, Stack, Text } from '@sanity/ui'
-import { VscHome } from 'react-icons/vsc'
+import { TbHome } from 'react-icons/tb'
 import { IntentButton } from 'sanity'
 import { type StructureBuilder, type StructureResolverContext } from 'sanity/structure'
 import { apiVersion } from '../../lib/api'
@@ -14,7 +14,7 @@ export const homeListItem = async (S: StructureBuilder, context: StructureResolv
   return S.listItem()
     .id('home')
     .title('Home')
-    .icon(VscHome)
+    .icon(TbHome)
     .child(
       homeDocument
         ? S.document()

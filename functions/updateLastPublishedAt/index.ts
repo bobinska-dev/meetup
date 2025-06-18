@@ -1,11 +1,8 @@
 import { createClient } from '@sanity/client'
 import { documentEventHandler } from '@sanity/functions'
-// SANITY_STUDIO_DATASET="structure-showroom" npx sanity functions test updateLastPublishedAt --data '{ "_id": "12345", "_type": "page"}'
 
 export const handler = documentEventHandler(async ({ context, event }) => {
   const time = new Date().toISOString()
-
-  console.log('::event::', event)
 
   const client = createClient({
     ...context.clientOptions,

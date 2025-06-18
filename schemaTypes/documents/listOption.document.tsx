@@ -1,9 +1,11 @@
+import { TbTag } from 'react-icons/tb'
 import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'listOption',
   title: 'List Option',
   type: 'document',
+  icon: TbTag,
   fields: [
     defineField({
       name: 'title',
