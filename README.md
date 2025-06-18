@@ -5,6 +5,12 @@ If you want to see the most extensive one (where all other branches come togethe
 
 ## Branches
 
+### Rebasing drafts with release published documents
+
+When drafts and release versions exist and are edited at the same time, they can diverge from each other in unexpected ways. When the release is then published, the existing draft can become out of sync. Those out of sync drafts can then override existing release-based and already published changes -> `lastPublishedAt` values could help with simple comparisons.
+
+This branch shows how to use the `lastPublishedAt` value to rebase the draft with the latest published document. This is a very useful solution for teams that work with drafts and releases at the same time.
+
 ### Main
 
 Check out [main branch](https://github.com/bobinska-dev/meetup/tree/main)
