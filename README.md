@@ -7,9 +7,22 @@ If you want to see the most extensive one (where all other branches come togethe
 
 ### Rebasing drafts with release published documents
 
-When drafts and release versions exist and are edited at the same time, they can diverge from each other in unexpected ways. When the release is then published, the existing draft can become out of sync. Those out of sync drafts can then override existing release-based and already published changes -> `lastPublishedAt` values could help with simple comparisons.
+Check out [rebasing-releases-and-drafts branch](https://github.com/bobinska-dev/meetup/tree/rebasing-releases-and-drafts)
 
+When drafts and release versions exist and are edited at the same time, they can diverge from each other in unexpected ways. When the release is then published, the existing draft can become out of sync. Those out of sync drafts can then override existing release-based and already published changes -> `lastPublishedAt` values could help with simple comparisons.
+<br/>
+
+| ![image](https://github.com/user-attachments/assets/7b4a15e7-2080-44c7-92c1-370a84cc7c80) |
+| :------------------------------------------------------------------------------------------------------------------------------------: |
+|                  _Drafts and releases can get out of sync - and there is a simple soluiton to make sure unintentional changes are published_                   |
+<br/>
 This branch shows how to use the `lastPublishedAt` value to rebase the draft with the latest published document. This is a very useful solution for teams that work with drafts and releases at the same time.
+
+| ![image](https://github.com/user-attachments/assets/353aebc5-5f89-40f0-91d3-16cf4727a89a) |
+| :------------------------------------------------------------------------------------------------------------------------------------: |
+|                  _Example from the studio - and preview of the solution in action_                   |
+<br/>
+<br/>
 
 ### Main
 
