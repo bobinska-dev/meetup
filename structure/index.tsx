@@ -2,7 +2,7 @@ import { StructureBuilder, StructureResolverContext } from 'sanity/structure'
 import { hiddenDocTypes } from './hiddenDocTypes'
 import { complexPagesStructure } from './lists/complexPagesStructure'
 import { defaultXbyYStructure } from './lists/defaultXbyYStructure'
-import { recursiveNestedStructure } from './lists/recursiveNestedStructure'
+import { recursiveNestedStructure } from './lists/recursiveNestedList'
 import { singletonListItems } from './lists/singletonStructure'
 
 /** # Structure Tool with Custom Structure list
