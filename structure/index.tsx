@@ -2,6 +2,7 @@ import { StructureBuilder, StructureResolverContext } from 'sanity/structure'
 import { hiddenDocTypes } from './hiddenDocTypes'
 import { complexPagesStructure } from './lists/complexPagesStructure'
 import { defaultXbyYStructure } from './lists/defaultXbyYStructure'
+import { recursiveNestedStructure } from './lists/recursiveNestedStructure'
 import { singletonListItems } from './lists/singletonStructure'
 
 /** # Structure Tool with Custom Structure list
@@ -22,6 +23,7 @@ export const customStructure = async (S: StructureBuilder, context: StructureRes
       S.divider().title('Pages'),
       await complexPagesStructure(S, context),
 
+      recursiveNestedStructure(S, context),
       S.divider().title('All Documents'),
       // The rest of this document is from the original manual grouping in this series of articles
       ...S.documentTypeListItems().filter(hiddenDocTypes),

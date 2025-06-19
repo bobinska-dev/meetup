@@ -14,10 +14,13 @@ export const navPagesList = (S: StructureBuilder, context: StructureResolverCont
     .icon(TbDirections)
     .child(async () => {
       // * Fetch menu Items
-      const pageMenuItems = await client.fetch(
-        // make sure you don't overfetch -> only return the value that you need and name it appropriately
-        `*[_id == 'settings'][0].menu`,
-      )
+      const pageMenuItems = await client
+        .fetch(
+          // make sure you don't overfetch -> only return the value that you need and name it appropriately
+          `*[_id == 'settings'][0].menu`,
+        )
+        .catch(console.error)
+        .then((res) => res)
       const pageItems = pageMenuItems?.map((menuItem: MenuItem & { _key: string }) => {
         // * Check if the menu item is nested return a list item with a child list
         const isNested = menuItem.isNested
@@ -62,7 +65,11 @@ export const navPagesList = (S: StructureBuilder, context: StructureResolverCont
       })
       return S.list()
         .title('Pages in menu')
-        .items(pageItems)
+        .items([
+          ...pageItems,
+          S.divider().title('Edit menu'),
+          S.documentListItem({ id: 'settings', schemaType: 'settings' }),
+        ])
         .menuItems([
           S.menuItem()
             .title('Edit menu in settings')
@@ -77,5 +84,13 @@ export const navPagesList = (S: StructureBuilder, context: StructureResolverCont
               },
             }),
         ])
+        .canHandleIntent(
+          (intentName, params) =>
+            (intentName === 'edit' &&
+              params.id === 'settings' &&
+              params.type === 'settings' &&
+              params.path === 'menu') ||
+            (intentName === 'edit' && params.type === 'page'),
+        )
     })
 }

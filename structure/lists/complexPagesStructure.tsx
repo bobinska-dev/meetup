@@ -18,7 +18,7 @@ export const complexPagesStructure = async (
     .catch(console.error)
 
   return S.listItem()
-    .title('Pages')
+    .title('Pages with bling')
     .icon(TbBrowser)
     .child(
       S.list()

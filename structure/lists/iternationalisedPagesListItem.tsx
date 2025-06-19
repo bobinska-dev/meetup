@@ -21,6 +21,8 @@ export const internationalisedPagesListItem = (
             .child(
               S.documentTypeList('market')
                 .title('Pages by Market')
+                .initialValueTemplates([])
+
                 .child((marketId) =>
                   S.documentTypeList('page')
                     .apiVersion(apiVersion)
@@ -38,14 +40,29 @@ export const internationalisedPagesListItem = (
             .child(
               S.documentTypeList('language')
                 .title('Pages by language')
-                .child((languageId) =>
-                  S.documentTypeList('page')
+                .initialValueTemplates([])
+                .child(async (languageId) => {
+                  const client = context
+                    .getClient({ apiVersion })
+                    .withConfig({ perspective: 'drafts' })
+
+                  const language = await client
+                    .fetch(`*[_type == "language" && _id == $languageId][0].code`, { languageId })
+                    .then((res) => res)
+                    .catch(console.error)
+
+                  return S.documentTypeList('page')
                     .apiVersion(apiVersion)
                     .filter(
                       '_type == "page" && language == *[_type == "language" && _id == $languageId][0].code',
                     )
-                    .params({ languageId }),
-                ),
+                    .params({ languageId })
+                    .initialValueTemplates(
+                      S.initialValueTemplateItem('internationalised-page', {
+                        language: language,
+                      }),
+                    )
+                }),
             ),
         ]),
     )
