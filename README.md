@@ -8,7 +8,8 @@ Have a look:
 
 This is the most basic structure that you can use to get started with the Studio. It shows how to create a simple structure which nests documents and its incoming references.
 
-| ![Dynamic list options based on listOption documents]()  |
+| ![Simple nested structure for 1 level of parent-child relationships](<img width="1316" alt="Screenshot 2025-06-19 at 15 00 03" src="https://github.com/user-attachments/assets/c23f32c8-77a3-4882-a4b8-5e1618197555" />
+)  |
 | :------------------------------------------------------: |
 | _X-by-Y structure example using a parent-child taxonomy_ |
 
@@ -17,22 +18,26 @@ This is the most basic structure that you can use to get started with the Studio
 If you are using the document level i18n plugin and control languages with document, I found a way to create templates for this use case!
 There is also a way to configure your sites navigation and nesting without a parent-child relationship, which is a common use case for pages and create a structure to display that in the Studio.
 
-|                   ![Dynamic list options based on listOption documents]()                   |
+|                   ![Spicy structure with a couple of amazing lists for pages](<img width="1322" alt="Screenshot 2025-06-19 at 15 02 29" src="https://github.com/user-attachments/assets/4846b99e-19a1-41d2-a018-fdb60110410c" />
+)                   |
 | :-----------------------------------------------------------------------------------------: |
 | _This example comes with i18n templates, which are based on `language` documents and more!_ |
 
 ### [Recursive nesting of parent-child relationships](https://github.com/bobinska-dev/meetup/tree/structure-showroom/structure/lists/recursiveNestedList)
 
-And for the main attraction of this showroom, I created a recursive parent-child structure with infinite nesting, and the ability to create new child documents inside of each structure!
+And for the main attraction of this showroom, I created a recursive parent-child structure with infinite nesting, and the ability to create new child draft documents inside of each structure! It even comes with intent handling for 🤯.
 
 Although this works differently than the default template driven workflow, it is the most powerful way to create a structure that can be used for any kind of content.
 This is especially useful for taxonomies, categories, and other hierarchical structures.
 
+I am very proud of this 🦚
+
 **Be aware that this structure is not the most performant one, so use it with care.**
 
-|       ![Dynamic list options based on listOption documents]()        |
+|       ![Dynamic list options based on listOption documents](![Screenshot 2025-06-19 at 15 19 30](https://github.com/user-attachments/assets/4c8f2f4e-c652-412c-a360-ce9cb87aec15)
+)        |
 | :------------------------------------------------------------------: |
-| _infinite nesting WITH the ability to create new child documents 🔥_ |
+| _infinite nesting WITH the ability to create new child draft documents 🔥_ |
 
 <br/>
 
