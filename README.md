@@ -1,9 +1,42 @@
-# Saskia Bobinska's demo Studio
+# Saskia Bobinska's demo Studio - Structure showroom
 
-In this repo, you will find a couple of interesting studio solutions - Each branch has its own focus.
-If you want to see the most extensive one (where all other branches come together), please skip to [Personalisation](#personalisation).
+In this branch you will find a couple structures for the Sanity Studio that show how to use the Studio to its full potential.
 
-## Branches
+Have a look:
+
+### [Default X-by-Y structure](https://github.com/bobinska-dev/meetup/tree/structure-showroom/structure/lists/defaultXbyYStructure.tsx)
+
+This is the most basic structure that you can use to get started with the Studio. It shows how to create a simple structure which nests documents and its incoming references.
+
+| ![Dynamic list options based on listOption documents]()  |
+| :------------------------------------------------------: |
+| _X-by-Y structure example using a parent-child taxonomy_ |
+
+### [Examples for pages structure with bling](https://github.com/bobinska-dev/meetup/tree/structure-showroom/structure/lists/complexPagesStructure.tsx)
+
+If you are using the document level i18n plugin and control languages with document, I found a way to create templates for this use case!
+There is also a way to configure your sites navigation and nesting without a parent-child relationship, which is a common use case for pages and create a structure to display that in the Studio.
+
+|                   ![Dynamic list options based on listOption documents]()                   |
+| :-----------------------------------------------------------------------------------------: |
+| _This example comes with i18n templates, which are based on `language` documents and more!_ |
+
+### [Recursive nesting of parent-child relationships](https://github.com/bobinska-dev/meetup/tree/structure-showroom/structure/lists/recursiveNestedList)
+
+And for the main attraction of this showroom, I created a recursive parent-child structure with infinite nesting, and the ability to create new child documents inside of each structure!
+
+Although this works differently than the default template driven workflow, it is the most powerful way to create a structure that can be used for any kind of content.
+This is especially useful for taxonomies, categories, and other hierarchical structures.
+
+**Be aware that this structure is not the most performant one, so use it with care.**
+
+|       ![Dynamic list options based on listOption documents]()        |
+| :------------------------------------------------------------------: |
+| _infinite nesting WITH the ability to create new child documents 🔥_ |
+
+<br/>
+
+## Other Branches
 
 ### Main
 
@@ -95,6 +128,29 @@ Here we take a step back from all the personalisation and dynamic stuff and focu
 <br>
 <br>
 
+### Rebasing drafts with release published documents
+
+Check out [rebasing-releases-and-drafts branch](https://github.com/bobinska-dev/meetup/tree/rebasing-releases-and-drafts)
+
+When drafts and release versions exist and are edited at the same time, they can diverge from each other in unexpected ways. When the release is then published, the existing draft can become out of sync. Those out of sync drafts can then override existing release-based and already published changes -> `lastPublishedAt` values could help with simple comparisons.
+<br/>
+
+|                  ![image](https://github.com/user-attachments/assets/a5a2915f-1561-4895-b78d-d9c72c2a6d7e)                  |
+| :-------------------------------------------------------------------------------------------------------------------------: |
+| _Drafts and releases can get out of sync - and there is a simple soluiton to make sure unintentional changes are published_ |
+
+<br/>
+This branch shows how to use the `lastPublishedAt` value to rebase the draft with the latest published document. This is a very useful solution for teams that work with drafts and releases at the same time.
+
+The solution uses a [function](https://www.sanity.io/docs/compute-and-ai/functions-introduction), [blueprints](https://www.sanity.io/docs/compute-and-ai/functions-introduction#k6757f4985012) and [an extended `publish` document action](https://www.sanity.io/docs/studio/document-actions#k9f3cecbfeaa1) to achieve this.
+**Make sure to read the documentation before, so you know what functions and blueprints do - and how to deploy those in your own projects.**
+
+| ![image](https://github.com/user-attachments/assets/353aebc5-5f89-40f0-91d3-16cf4727a89a) |
+| :---------------------------------------------------------------------------------------: |
+|             _Example from the studio - and preview of the solution in action_             |
+
+<br/>
+<br/>
 #### Specials
 
 It's worth hovering over some of the parts of the custom components because there are a lot of user-shortcuts and hidden features.
