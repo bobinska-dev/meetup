@@ -20,13 +20,13 @@ export type Settings = {
   _updatedAt: string
   _rev: string
   title?: string
-  homePage: {
+  homePage?: {
     _ref: string
     _type: 'reference'
     _weak?: boolean
     [internalGroqTypeReferenceTo]?: 'page'
   }
-  menu: Array<
+  menu?: Array<
     {
       _key: string
     } & MenuItem
@@ -67,7 +67,7 @@ export type Menu = Array<
 
 export type MenuItem = {
   _type: 'menuItem'
-  title: string
+  title?: string
   isNested?: boolean
   link?: {
     _ref: string
@@ -88,9 +88,9 @@ export type Market = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  code: string
-  languages: Array<{
+  title?: string
+  code?: string
+  languages?: Array<{
     _ref: string
     _type: 'reference'
     _weak?: boolean
@@ -105,23 +105,143 @@ export type Language = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  code: string
+  title?: string
+  code?: string
   isDefault?: boolean
 }
 
-export type ListOption = {
+export type SanityAssistInstructionTask = {
+  _type: 'sanity.assist.instructionTask'
+  path?: string
+  instructionKey?: string
+  started?: string
+  updated?: string
+  info?: string
+}
+
+export type SanityAssistTaskStatus = {
+  _type: 'sanity.assist.task.status'
+  tasks?: Array<
+    {
+      _key: string
+    } & SanityAssistInstructionTask
+  >
+}
+
+export type SanityAssistSchemaTypeAnnotations = {
+  _type: 'sanity.assist.schemaType.annotations'
+  title?: string
+  fields?: Array<
+    {
+      _key: string
+    } & SanityAssistSchemaTypeField
+  >
+}
+
+export type SanityAssistOutputType = {
+  _type: 'sanity.assist.output.type'
+  type?: string
+}
+
+export type SanityAssistOutputField = {
+  _type: 'sanity.assist.output.field'
+  path?: string
+}
+
+export type SanityAssistInstructionContext = {
+  _type: 'sanity.assist.instruction.context'
+  reference?: {
+    _ref: string
+    _type: 'reference'
+    _weak?: boolean
+    [internalGroqTypeReferenceTo]?: 'assist.instruction.context'
+  }
+}
+
+export type AssistInstructionContext = {
   _id: string
-  _type: 'listOption'
+  _type: 'assist.instruction.context'
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  value: Slug
-  internationalisedTitle: Array<
+  title?: string
+  context?: Array<{
+    children?: Array<{
+      marks?: Array<string>
+      text?: string
+      _type: 'span'
+      _key: string
+    }>
+    style?: 'normal'
+    listItem?: never
+    markDefs?: null
+    level?: number
+    _type: 'block'
+    _key: string
+  }>
+}
+
+export type SanityAssistInstructionUserInput = {
+  _type: 'sanity.assist.instruction.userInput'
+  message?: string
+  description?: string
+}
+
+export type SanityAssistInstructionPrompt = Array<{
+  children?: Array<
+    | {
+        marks?: Array<string>
+        text?: string
+        _type: 'span'
+        _key: string
+      }
+    | ({
+        _key: string
+      } & SanityAssistInstructionFieldRef)
+    | ({
+        _key: string
+      } & SanityAssistInstructionContext)
+    | ({
+        _key: string
+      } & SanityAssistInstructionUserInput)
+  >
+  style?: 'normal'
+  listItem?: never
+  markDefs?: null
+  level?: number
+  _type: 'block'
+  _key: string
+}>
+
+export type SanityAssistInstructionFieldRef = {
+  _type: 'sanity.assist.instruction.fieldRef'
+  path?: string
+}
+
+export type SanityAssistInstruction = {
+  _type: 'sanity.assist.instruction'
+  prompt?: SanityAssistInstructionPrompt
+  icon?: string
+  title?: string
+  userId?: string
+  createdById?: string
+  output?: Array<
+    | ({
+        _key: string
+      } & SanityAssistOutputField)
+    | ({
+        _key: string
+      } & SanityAssistOutputType)
+  >
+}
+
+export type SanityAssistSchemaTypeField = {
+  _type: 'sanity.assist.schemaType.field'
+  path?: string
+  instructions?: Array<
     {
       _key: string
-    } & InternationalizedArrayStringValue
+    } & SanityAssistInstruction
   >
 }
 
@@ -155,11 +275,16 @@ export type Page = {
   _createdAt: string
   _updatedAt: string
   _rev: string
-  title: string
-  slug: Slug
+  title?: string
+  slug?: Slug
   dynamicList?: Array<{
     title?: string
-    value?: string
+    value?: {
+      _ref: string
+      _type: 'reference'
+      _weak?: boolean
+      [internalGroqTypeReferenceTo]?: 'listOption'
+    }
     _type: 'dynamicListItem'
     _key: string
   }>
@@ -170,6 +295,25 @@ export type Page = {
     _weak?: boolean
     [internalGroqTypeReferenceTo]?: 'page'
   }
+  language?: string
+  isInMenu?: boolean
+  firstPublishedAt?: string
+  lastPublishedAt?: string
+}
+
+export type ListOption = {
+  _id: string
+  _type: 'listOption'
+  _createdAt: string
+  _updatedAt: string
+  _rev: string
+  title?: string
+  value?: Slug
+  internationalisedTitle?: Array<
+    {
+      _key: string
+    } & InternationalizedArrayStringValue
+  >
 }
 
 export type InternationalizedArrayReference = Array<
@@ -296,7 +440,7 @@ export type Geopoint = {
 
 export type Slug = {
   _type: 'slug'
-  current: string
+  current?: string
   source?: string
 }
 
@@ -314,10 +458,22 @@ export type AllSanitySchemaTypes =
   | MenuItem
   | Market
   | Language
-  | ListOption
+  | SanityAssistInstructionTask
+  | SanityAssistTaskStatus
+  | SanityAssistSchemaTypeAnnotations
+  | SanityAssistOutputType
+  | SanityAssistOutputField
+  | SanityAssistInstructionContext
+  | AssistInstructionContext
+  | SanityAssistInstructionUserInput
+  | SanityAssistInstructionPrompt
+  | SanityAssistInstructionFieldRef
+  | SanityAssistInstruction
+  | SanityAssistSchemaTypeField
   | TranslationMetadata
   | InternationalizedArrayReferenceValue
   | Page
+  | ListOption
   | InternationalizedArrayReference
   | InternationalizedArrayStringValue
   | InternationalizedArrayString
