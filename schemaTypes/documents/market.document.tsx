@@ -63,7 +63,7 @@ export default defineType({
         .filter(Boolean)
         .map((lang) => lang.toUpperCase())
       const subtitle = languages.length > 0 ? languages.join(', ') : null
-      const codeTitle = code ? `${title}  - (${code.toUpperCase()})` : ''
+      const codeTitle = code ? `${title}  (${code.toUpperCase()})` : ''
       return {
         title: codeTitle || 'Market',
         subtitle: subtitle ? `(${subtitle})` : 'No languages assigned',
