@@ -1,7 +1,7 @@
 import { defineBlueprint, defineDocumentFunction } from '@sanity/blueprints'
 
 export default defineBlueprint({
-  // blueprintVersion
+  blueprintVersion: '2025-06-01',
   resources: [
     defineDocumentFunction({
       name: 'updateLastPublishedAt',

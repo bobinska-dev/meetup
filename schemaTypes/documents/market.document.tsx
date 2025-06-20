@@ -49,4 +49,25 @@ export default defineType({
       validation: (Rule) => Rule.required().min(1),
     }),
   ],
+  preview: {
+    select: {
+      title: 'title',
+      code: 'code',
+      language1: 'languages.0.code',
+      language2: 'languages.1.code',
+      language3: 'languages.2.code',
+      language4: 'languages.3.code',
+    },
+    prepare({ title, language1, language2, language3, language4, code }) {
+      const languages = [language1, language2, language3, language4]
+        .filter(Boolean)
+        .map((lang) => lang.toUpperCase())
+      const subtitle = languages.length > 0 ? languages.join(', ') : null
+      const codeTitle = code ? `${title}  (${code.toUpperCase()})` : ''
+      return {
+        title: codeTitle || 'Market',
+        subtitle: subtitle ? `(${subtitle})` : 'No languages assigned',
+      }
+    },
+  },
 })
