@@ -65,7 +65,7 @@ export default defineType({
       const subtitle = languages.length > 0 ? languages.join(', ') : null
       const codeTitle = code ? `${title}  - (${code.toUpperCase()})` : ''
       return {
-        title: title + code || 'Market',
+        title: codeTitle || 'Market',
         subtitle: subtitle ? `(${subtitle})` : 'No languages assigned',
       }
     },
