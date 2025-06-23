@@ -38,6 +38,7 @@ export const recursiveNestedStructure = (
         map<SanityDocument[], ListBuilder>((documents) => {
           return S.list()
             .title('Parents')
+
             .items(
               documents.map((parent) => {
                 const details = detailDocListItem(S, parent, TbSignRight)
@@ -63,7 +64,7 @@ export const recursiveNestedStructure = (
                               .title(`Parent & Children - "${parent.title}"`)
                               .canHandleIntent(
                                 (intentName, params) =>
-                                  intentName === 'create' && params.type === 'page',
+                                  intentName === 'edit' && params.type === 'page',
                               )
                               .items([
                                 details,

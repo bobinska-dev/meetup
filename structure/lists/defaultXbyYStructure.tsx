@@ -13,6 +13,7 @@ export const defaultXbyYStructure = (S: StructureBuilder) =>
         .id('defaultXbyYStructure-parents')
         .filter('_type == "page" && !defined(parent._ref)')
         .apiVersion(apiVersion)
+        .canHandleIntent((intentName, params) => intentName === 'edit' && params.type === 'page')
         .child((parentId) =>
           S.documentTypeList('page')
             .id(`defaultXbyYStructure-children-${parentId}`)
