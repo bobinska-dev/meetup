@@ -72,6 +72,7 @@ export function queryChildren({
   const query = groq`*[_type == $type && references($parentId)] | order(_createdAt desc){
           _id, title, _type, "slug": slug.current, language,
           // check if the child has children
+          // if you want to use the same structure for documents without children you can set the comparison to >= 0
           count(*[_type == $type && references(^._id)]) > 0 => {
             "children": count(*[_type == $type && references(^._id)]) > 0
           }
