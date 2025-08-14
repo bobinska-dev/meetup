@@ -191,3 +191,19 @@ A custom tool, like this dashboard, is one of the most useful but underused comp
 
 <br>
 <br>
+
+##### Incoming Reference Indicator
+
+[See component](https://github.com/bobinska-dev/meetup/blob/personalisation/components/input/IncomingReferenceDocumentLevel.tsx)
+
+References are always bidirectional in Sanity - to make them visible you can use a custom component to make them visible inside of a document form. 
+This component will also allow editors to open the document referencing the currently open document to the rigth (just like a normal reference field would.
+
+<br>
+
+|                       <img width="1224" height="823" alt="Screenshot 2025-08-14 at 13 37 02" src="https://github.com/user-attachments/assets/b7bd050b-ddf6-4a53-bcbe-f418496f0d71" />  |
+| :----------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+| _Indicator component for incoming references._ |
+
+<br>
+<br>
