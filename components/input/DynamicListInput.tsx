@@ -23,7 +23,7 @@ interface TitledListValueWithDescription extends TitledListValue<string> {
 const DynamicListInput: ComponentType<ArrayOfObjectsInputProps> = (props) => {
   // * Initialize the Studio client
   const client = useClient({ apiVersion }).withConfig({
-    perspective: 'previewDrafts',
+    perspective: 'drafts',
   })
 
   // * Initialize the router and get the pane groups

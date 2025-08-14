@@ -3,11 +3,15 @@ import { defineField, defineType } from 'sanity'
 import { PagePreviewMedia } from '../../components/previews/PagePreview'
 import boringList from '../specialFields/boringList'
 import dynamicList from '../specialFields/dynamicList'
+import { IncomingRefIndicator } from '../../components/input/IncomingReferenceDocumentLevel'
 export default defineType({
   name: 'page',
   title: 'Page',
   type: 'document',
   icon: TbBrowser,
+  components: {
+    input: IncomingRefIndicator
+  },
   fields: [
     defineField({
       name: 'title',
