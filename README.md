@@ -196,7 +196,7 @@ A custom tool, like this dashboard, is one of the most useful but underused comp
 
 [See component](https://github.com/bobinska-dev/meetup/blob/personalisation/components/input/IncomingReferenceDocumentLevel.tsx)
 
-References are always bidirectional in Sanity - to make them visible you can use a custom component to make them visible inside of a document form. 
+References are always bidirectional in Sanity - to make them visible you can use a custom component to surface them inside of a document form. 
 This component will also allow editors to open the document referencing the currently open document to the rigth (just like a normal reference field would.
 
 <br>
