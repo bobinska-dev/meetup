@@ -15,16 +15,32 @@ export const handler = documentEventHandler(async ({ context, event }) => {
     console.error('No data found.')
     return
   }
+  console.group('::: DATA ::: ')
+  console.dir(data, { depth: null })
+  console.groupEnd()
+
   const { _id, _type, deletedAt, documentTitle, _rev, deletedBy } = data
   const publishedId = _id.split('.')
   // Check if this document was published
   const hasPublishedVersion = await client
-    .fetch(`count(*[_type == $type && _id == $id]._id) > 0`, {
-      type: data._type,
-      id: publishedId[publishedId.length - 1],
+    .request({
+      method: 'GET',
+      uri: `/data/doc/${process.env.SANITY_STUDIO_DATASET}/${publishedId}?includeAllVersions=true`,
+    })
+    .then((res) => {
+      console.group('::: hasPublishedVersion docs ::: ')
+      console.dir(res, { depth: null })
+      console.groupEnd()
+      return res.documents.length > 0
     })
     .catch(console.error)
-  console.dir(data, { depth: null })
+
+  if (hasPublishedVersion) {
+    console.log(
+      `Document has been deleted: ${data._id} but it has other existing versions: ${hasPublishedVersion}`,
+    )
+    return
+  }
 
   if (!hasPublishedVersion) {
     const idLogPatch = client
@@ -56,9 +72,11 @@ export const handler = documentEventHandler(async ({ context, event }) => {
       .patch(idLogPatch)
       .patch(logPatch)
       .commit()
-      .then((res) => console.dir('logs successfully updated', res))
+      .then((res) => {
+        console.group('Recycling bin logs successfully updated')
+        console.dir(res, { depth: null })
+        console.groupEnd()
+      })
       .catch(console.error)
   }
-
-  console.log(`Document has been deleted: ${data._id} but it was published: ${hasPublishedVersion}`)
 })
