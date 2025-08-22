@@ -54,7 +54,7 @@ export default defineType({
         sortable: false,
       },
       description:
-        'Log of deleted documents. All items have the revision ID as the _key value and might have already been restored again.',
+        'Log of deleted documents. If you restore a published document with a draft, the most recent draft version will be restored, but the published document is still available its history.',
       of: [
         defineArrayMember({
           type: 'object',
