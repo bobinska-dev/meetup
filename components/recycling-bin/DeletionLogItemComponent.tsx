@@ -12,7 +12,7 @@ import User from './User'
  *
  * with Intent Button to open the document and restore it
  */
-export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> = async (props) => {
+export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> = (props) => {
   // * Get the value from the props
   const value = props.value
   // * Set up user client to get the user name of the user who deleted the document
@@ -52,7 +52,7 @@ export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> =
 
   return (
     /* only display a border top, if its not the first one 💅 */
-    <Card borderTop={props.index > 0 ? true : false}>
+    <Card borderTop={props.index > 0}>
       {/*
        * * * Flex container for "custom" item preview and Intent Button */}
       <Flex justify={'space-between'} align={'center'} gap={2} paddingX={4} paddingY={4}>
@@ -70,7 +70,7 @@ export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> =
           </Text>
           {user && <User {...user} />}
           <Text muted size={0}>
-            ID: {value.docId}, Revision: {value._key as string}
+            ID: {value.docId}, Revision: {value.revisionId as string}
           </Text>
         </Stack>
         {/*
@@ -84,7 +84,7 @@ export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> =
             params={{
               type: value.type,
               id: value.docId,
-              revision: value._key,
+              revision: value.revisionId,
             }}
             text="Open to restore"
             tooltipProps={{

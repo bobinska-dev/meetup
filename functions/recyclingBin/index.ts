@@ -1,5 +1,6 @@
 import { documentEventHandler } from '@sanity/functions'
 import { createClient } from '@sanity/client'
+import { getPublishedId } from '@sanity/id-utils'
 
 export const handler = documentEventHandler(async ({ context, event }) => {
   const clientOptions = context.clientOptions
@@ -7,7 +8,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
     ...clientOptions,
     apiVersion: '2025-08-22',
     requestTagPrefix: 'recycling-bin',
-    perspective: 'published',
+    perspective: 'raw',
     useCdn: false,
   })
   const { data } = event
@@ -19,8 +20,8 @@ export const handler = documentEventHandler(async ({ context, event }) => {
   console.dir(data, { depth: null })
   console.groupEnd()
 
-  const { _id, _type, deletedAt, documentTitle, _rev, deletedBy } = data
-  const publishedId = _id.split('.')
+  const { _id, _type, deletedAt, documentTitle, rev, deletedBy } = data
+  const publishedId = getPublishedId(_id)
   // Check if this document was published
   const hasPublishedVersion = await client
     .request({
@@ -29,8 +30,9 @@ export const handler = documentEventHandler(async ({ context, event }) => {
     })
     .then((res) => {
       console.group('::: hasPublishedVersion docs ::: ')
-      console.dir(res, { depth: null })
+      console.dir(res)
       console.groupEnd()
+      // return false if both documents
       return res.documents.length > 0
     })
     .catch(console.error)
@@ -57,7 +59,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
           deletedAt,
           type: _type,
           documentTitle,
-          _key: _rev,
+          revisionId: rev,
           deletedBy,
           _type: 'log',
         },
@@ -71,7 +73,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
       })
       .patch(idLogPatch)
       .patch(logPatch)
-      .commit()
+      .commit({ autoGenerateArrayKeys: true })
       .then((res) => {
         console.group('Recycling bin logs successfully updated')
         console.dir(res, { depth: null })

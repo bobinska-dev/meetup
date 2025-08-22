@@ -6,10 +6,12 @@ import {
   defineField,
   defineType,
   ObjectItem,
+  ObjectItemProps,
 } from 'sanity'
 import { DeletedDocIdInputComponent } from '../../components/recycling-bin/DeletedDocIdInputComponent'
 import { DeletionLogInputComponent } from '../../components/recycling-bin/DeletionLogInputComponent'
 import { DeletionLogItemComponent } from '../../components/recycling-bin/DeletionLogItemComponent'
+import { ComponentType } from 'react'
 
 // import ObjectItem from sanity
 
@@ -19,6 +21,7 @@ export interface LogItem extends ObjectItem {
   type: string
   documentTitle: string | 'Unknown 🥲'
   deletedBy?: string
+  revisionId: string
 }
 
 export default defineType({
@@ -87,9 +90,14 @@ export default defineType({
               title: 'Deleted By',
               type: 'string',
             }),
+            defineField({
+              name: 'revisionId',
+              title: 'Revision Id',
+              type: 'string',
+            }),
           ],
           components: {
-            item: DeletionLogItemComponent,
+            item: DeletionLogItemComponent as unknown as ComponentType<ObjectItemProps>,
           },
         }),
       ],

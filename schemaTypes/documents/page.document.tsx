@@ -1,8 +1,6 @@
 import { TbBrowser } from 'react-icons/tb'
 import { defineField, defineType } from 'sanity'
 import { PagePreviewMedia } from '../../components/previews/PagePreviewMedia'
-import boringList from '../specialFields/boringList'
-import dynamicList from '../specialFields/dynamicList'
 
 export default defineType({
   name: 'page',
@@ -25,8 +23,8 @@ export default defineType({
         source: 'title',
       },
     }),
-    boringList,
-    dynamicList,
+    /*    boringList,
+        dynamicList,*/
 
     defineField({
       name: 'body',
@@ -38,6 +36,12 @@ export default defineType({
       name: 'language',
       type: 'string',
       hidden: true,
+    }),
+    defineField({
+      name: 'lastPublishedAt',
+      title: 'Last Published At',
+      type: 'datetime',
+      readOnly: true,
     }),
   ],
 
