@@ -14,7 +14,7 @@ import { structure } from './structure'
 
 export default defineConfig({
   name: 'default',
-  title: 'Demo',
+  title: 'Demo recycling bin',
 
   projectId: 'xonzamf8',
   dataset: 'production',
