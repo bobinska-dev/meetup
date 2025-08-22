@@ -1,7 +1,7 @@
 # Saskia Bobinska's demo Studio
 
 This particular branch is mainly showcasing the recycling bin solution via webhooks. Please check the main branches
-readMe or the other branches for more examples.
+ReadMe or the other branches for more examples.
 
 ## Recycling Bin via webhooks
 
