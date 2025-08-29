@@ -4,17 +4,27 @@ import { TbSignRight } from 'react-icons/tb'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { DocumentStore, Id, ListenQueryOptions } from 'sanity'
-import type {
-  Divider,
-  ListItem,
-  ListItemBuilder,
-  StructureBuilder,
-  StructureResolverContext,
-} from 'sanity/structure'
+import type { Divider, ListItem, ListItemBuilder, StructureBuilder, StructureResolverContext } from 'sanity/structure'
 
 import { apiVersion } from '../../../lib/api'
 import { childList } from './childList'
 import { detailDocListItem } from './detailDocListItem'
+
+/** Define which relationship to use for parent/child checks
+ *
+ * By default, this uses the `references` function to check for any references to the parent document
+ * in the child documents.
+ * This is a generic way that works for most use cases, but if you have a specific field that defines
+ * the parent/child relationship you might want to change this to use that field instead.
+ *
+ * Examples:
+ * ```ts
+ * const childFilter = `parent._ref == ^._id`
+ * // or even
+ * const childFilter = `^._id in arrayOfReferencesFieldName[]._ref`
+ * ```
+ */
+const childFilter = groq`references(^._id)`
 
 // * * * fetch parents * * *
 /** This will fetch parent documents and also their children if there are any */
@@ -31,11 +41,11 @@ export function queryParents({
   const parentQuery = groq` *[_type == $type && !defined(parent)]{
     _id, _type, title, "slug": slug.current, language,
     // check if the parent has children
-    count(*[_type == $type && references(^._id)]) > 0 => {
-      "children": *[_type == $type && references(^._id)] | order(_createdAt desc){ 
+    count(*[_type == $type && ${childFilter}]) > 0 => {
+      "children": *[_type == $type && ${childFilter}] | order(_createdAt desc){ 
         _id, _type, title, "slug": slug.current, language,
         // check if the child has children
-        "hasChildren": count(*[_type == $type && references(^._id)]) > 0 
+        "hasChildren": count(*[_type == $type && ${childFilter}]) > 0 
       }
     }
   }`
@@ -69,12 +79,12 @@ export function queryChildren({
   /** the schema type name */
   type: string // allow passing a different type if needed
 }): Observable<ListItemBuilder | ListItem | Divider> {
-  const query = groq`*[_type == $type && references($parentId)] | order(_createdAt desc){
+  const query = groq`*[_type == $type && references($parentId)] | order(_createdAt desc){
           _id, title, _type, "slug": slug.current, language,
           // check if the child has children
           // if you want to use the same structure for documents without children you can set the comparison to >= 0
-          count(*[_type == $type && references(^._id)]) > 0 => {
-            "children": count(*[_type == $type && references(^._id)]) > 0
+          count(*[_type == $type && ${childFilter}]) > 0 => {
+            "children": count(*[_type == $type && ${childFilter}]) > 0
           }
         }
   `
