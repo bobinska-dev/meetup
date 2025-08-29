@@ -6,6 +6,7 @@ export default defineCliConfig({
     projectId,
     dataset: 'structure-showroom',
   },
+  studioHost: 'structure-showroom',
   /**
    * Enable auto-updates for studios.
    * Learn more at https://www.sanity.io/docs/cli#auto-updates
