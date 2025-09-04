@@ -261,7 +261,7 @@ navigate and understand the document structure.
 
 <br>
 
-|                                          (tbd)                                           |
+| <img width="1530" height="1332" alt="Screenshot 2025-08-20 at 19 32 00" src="https://github.com/user-attachments/assets/8d90f829-ad6e-47a7-8101-a9c63b30d35a" /> |
 |:----------------------------------------------------------------------------------------:|
 | _Numbered headings in the PTE also visually represented inthe Table of contents plugin._ |
 
