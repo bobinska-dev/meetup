@@ -24,23 +24,23 @@
     "@sanity/blueprints": "^0.2.0",
     "@sanity/cli": "^4.5.0",
     "@sanity/document-internationalization": "^4.0.0",
-    "@sanity/vision": "^4.5.0",
+    "@sanity/vision": "^4.6.0",
     "eslint-plugin-simple-import-sort": "^12.1.1",
-    "groq": "^4.5.0",
+    "groq": "^4.6.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
-    "sanity": "^4.5.0",
+    "sanity": "^4.6.0",
     "sanity-plugin-internationalized-array": "^3.1.5",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
     "@sanity/eslint-config-studio": "^5.0.2",
+    "@sanity/functions": "^1.0.3",
     "@types/react": "^19.1.5",
     "eslint": "^9.27.0",
     "prettier": "^3.6.2",
-    "typescript": "^5.8.3",
-    "@sanity/functions": "1.0.3"
+    "typescript": "^5.8.3"
   },
   "prettier": {
     "semi": false,
