@@ -1,6 +1,9 @@
 import { TbBrowser } from 'react-icons/tb'
 import { defineField, defineType } from 'sanity'
 import { PagePreviewMedia } from '../../components/previews/PagePreviewMedia'
+import boringList from '../specialFields/boringList'
+import dynamicList from '../specialFields/dynamicList'
+import superSpecialArrayofRefs from '../specialFields/superSpecialArrayofRefs'
 
 export default defineType({
   name: 'page',
@@ -23,8 +26,9 @@ export default defineType({
         source: 'title',
       },
     }),
-    /*    boringList,
-        dynamicList,*/
+    boringList,
+    dynamicList,
+    superSpecialArrayofRefs,
 
     defineField({
       name: 'body',
