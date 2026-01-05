@@ -20,10 +20,6 @@ export const handler = documentEventHandler(async ({ context, event }) => {
 
   const { _id } = data
 
-  console.group('::: DATA ::: ')
-  console.dir(data, { depth: null })
-  console.groupEnd()
-
   const isDraft = isDraftId(_id)
   const publishedId = getPublishedId(_id)
   // Check if this document was published
