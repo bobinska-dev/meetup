@@ -7,7 +7,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
   const clientOptions = context.clientOptions
   const client = createClient({
     ...clientOptions,
-    apiVersion: '2025-08-22',
+    apiVersion: '2026-01-01',
     requestTagPrefix: 'recycling-bin-cleanup',
     perspective: 'published',
     useCdn: false,
