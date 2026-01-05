@@ -1,6 +1,7 @@
 import { documentEventHandler } from '@sanity/functions'
 import { createClient } from '@sanity/client'
 import { getPublishedId } from '@sanity/id-utils'
+import { isDraftId } from 'sanity'
 
 export const handler = documentEventHandler(async ({ context, event }) => {
   const clientOptions = context.clientOptions
@@ -14,15 +15,16 @@ export const handler = documentEventHandler(async ({ context, event }) => {
   const { data } = event
   if (!data || !data._id) {
     console.error('No data found. Cannot clean up bin logs.')
-    console.group('::: DATA ::: ')
-    console.dir(data, { depth: null })
-    console.groupEnd()
     return
   }
 
   const { _id } = data
 
-  const isDraft = _id.startsWith('drafts.')
+  console.group('::: DATA ::: ')
+  console.dir(data, { depth: null })
+  console.groupEnd()
+
+  const isDraft = isDraftId(_id)
   const publishedId = getPublishedId(_id)
   // Check if this document was published
   const restoredItemKeys = await client

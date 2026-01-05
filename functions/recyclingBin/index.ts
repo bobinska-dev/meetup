@@ -6,7 +6,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
   const clientOptions = context.clientOptions
   const client = createClient({
     ...clientOptions,
-    apiVersion: '2025-08-22',
+    apiVersion: '2026-01-01',
     requestTagPrefix: 'recycling-bin',
     perspective: 'raw',
     useCdn: false,
@@ -29,7 +29,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
       uri: `/data/doc/${process.env.SANITY_STUDIO_DATASET}/${publishedId}?includeAllVersions=true`,
     })
     .then((res) => {
-      console.group('::: hasPublishedVersion docs ::: ')
+      console.group(`::: hasPublishedVersion docs ::: `)
       console.dir(res)
       console.groupEnd()
       // return false if both documents
