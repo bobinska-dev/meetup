@@ -105,7 +105,7 @@ export default defineType({
         input: DeletionLogInputComponent,
       },
     }),
-    // Backup of all deleted doc ids
+    // * Backup of all deleted doc ids
     defineField({
       name: 'deletedDocIds',
       title: 'Deleted Doc Ids',
@@ -121,7 +121,6 @@ export default defineType({
       },
       fieldset: 'deletedDocIdLogs',
       of: [
-        // TODO: figure out if object with release ids is better suited now.
         defineArrayMember({
           name: 'deletedDocId',
           type: 'string',

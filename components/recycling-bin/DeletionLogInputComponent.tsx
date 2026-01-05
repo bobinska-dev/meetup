@@ -2,9 +2,7 @@ import { Stack } from '@sanity/ui'
 import { ComponentType } from 'react'
 import { ArrayOfObjectsInputProps } from 'sanity'
 
-/** ### Array Input Component with Button to clean up the log
- *
- * removes restored documents from the logs array
+/** ### Array Input Component without any array functions (like "Add Item" button)
  */
 export const DeletionLogInputComponent: ComponentType<ArrayOfObjectsInputProps> = (props) => {
   return (

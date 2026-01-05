@@ -34,24 +34,12 @@ export const DeletionLogItemComponent: ComponentType<ObjectItemProps<LogItem>> =
 
   // * Format the date to be nice and universal
   const date = new Date(value.deletedAt)
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ]
-  const formattedDate = `${date.getDate()}.${months[date.getMonth()]} ${date.getFullYear()}`
+  // Get full month name in English (change 'en' to `undefined` to use runtime locale)
+  const monthName = date.toLocaleString('en', { month: 'long' })
+  const formattedDate = `${date.getDate()}. ${monthName} ${date.getFullYear()}`
 
   return (
-    /* only display a border top, if its not the first one 💅 */
+    /* only display a border top, if it's not the first one 💅 */
     <Card borderTop={props.index > 0}>
       {/*
        * * * Flex container for "custom" item preview and Intent Button */}

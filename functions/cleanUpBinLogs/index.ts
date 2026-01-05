@@ -1,7 +1,6 @@
 import { documentEventHandler } from '@sanity/functions'
 import { createClient } from '@sanity/client'
-import { getPublishedId } from '@sanity/id-utils'
-import { isDraftId } from 'sanity'
+import { getPublishedId, isDraftId } from '@sanity/id-utils'
 
 export const handler = documentEventHandler(async ({ context, event }) => {
   const clientOptions = context.clientOptions
