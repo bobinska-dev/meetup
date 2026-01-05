@@ -11,6 +11,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
     perspective: 'raw',
     useCdn: false,
   })
+  const dataset = clientOptions.dataset
   const { data } = event
   if (!data || !data._id) {
     console.error('No data found.')
@@ -26,7 +27,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
   const hasPublishedVersion = await client
     .request({
       method: 'GET',
-      uri: `/data/doc/${process.env.SANITY_STUDIO_DATASET}/${publishedId}?includeAllVersions=true`,
+      uri: `/data/doc/${dataset}/${publishedId}?includeAllVersions=true`,
     })
     .then((res) => {
       console.group(`::: hasPublishedVersion docs ::: `)
