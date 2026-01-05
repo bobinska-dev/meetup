@@ -74,7 +74,10 @@ export const handler = documentEventHandler(async ({ context, event }) => {
       })
       .patch(idLogPatch)
       .patch(logPatch)
-      .commit({ autoGenerateArrayKeys: true })
+      .commit({
+        autoGenerateArrayKeys: true,
+        dryRun: false,
+      }) // IMPORTANT: Set dryRun to true when testing your function locally!
       .then((res) => {
         console.group('Recycling bin logs successfully updated')
         console.dir(res, { depth: null })

@@ -38,7 +38,7 @@ export const handler = documentEventHandler(async ({ context, event }) => {
   await client
     .patch('deletedDocs.bin')
     .unset(itemsToUnset)
-    .commit()
+    .commit({ dryRun: false }) // IMPORTANT: Set dryRun to true when testing your function locally!
     .then((res) => {
       console.log(`Cleaned up bin logs for document: ${_id}`)
       console.dir(res)
