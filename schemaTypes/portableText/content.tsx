@@ -1,18 +1,23 @@
 import { defineArrayMember, defineType } from 'sanity'
 
 export default defineType({
-  name: 'body',
-  title: 'Body',
+  name: 'content',
+  title: 'Rich table content',
   type: 'array',
   of: [
     defineArrayMember({
       type: 'block',
+      options: {
+        // Restrict to a single line for table cell content to make it more manageable
+        oneLine: true,
+      },
     }),
     defineArrayMember({
       type: 'image',
       name: 'image',
       title: 'Image',
       options: { hotspot: true },
+      // TODO: Add small preview and block component so that less real estate is being used inside of the table cell
     }),
     // TODO: test out richTable inside of portable text
   ],
