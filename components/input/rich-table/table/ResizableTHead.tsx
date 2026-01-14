@@ -7,6 +7,7 @@ export default styled.thead`
     top: 0;
     height: 100%;
     width: 5px;
+    // @ts-ignore
     background: var(--card-border-color);
     cursor: col-resize;
     user-select: none;
@@ -14,6 +15,7 @@ export default styled.thead`
   }
 
   .resizer.isResizing {
+    // @ts-ignore
     background: var(--card-focus-ring-color);
     opacity: 1;
   }
