@@ -3,7 +3,7 @@ import { defineField, defineType } from 'sanity'
 export interface ColumnHeader {
   title: string
   /** test to integrate headers with cell keys */
-  cellKeys?: Array<string>
+  cellIndex: number
 }
 export default defineType({
   name: 'columnHeader',
@@ -17,10 +17,11 @@ export default defineType({
       validation: (Rule) => Rule.required().error('Column title is required.'),
     }),
     defineField({
-      name: 'cellKeys',
-      title: 'Cell Keys',
-      type: 'array',
-      of: [{ type: 'string' }],
+      name: 'cellIndex',
+      title: 'Cell Index',
+      type: 'number',
+      description: 'Index of the cells this header corresponds to.',
+      validation: (Rule) => Rule.required(),
     }),
   ],
 })
