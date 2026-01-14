@@ -9,7 +9,7 @@ export default defineType({
       type: 'block',
       options: {
         // Restrict to a single line for table cell content to make it more manageable
-        oneLine: true,
+        oneLine: false,
       },
     }),
     defineArrayMember({

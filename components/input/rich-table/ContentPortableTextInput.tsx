@@ -1,13 +1,5 @@
-import {
-  ArrayDefinition,
-  ArraySchemaType,
-  getPublishedId,
-  InputProps,
-  PortableTextBlock,
-  useDocumentOperation,
-  useFormValue,
-} from 'sanity'
-import { ComponentType, useRef } from 'react'
+import { ArrayDefinition, ArraySchemaType, InputProps, pathToString, PortableTextBlock, useFormValue } from 'sanity'
+import { ComponentType, Suspense, useRef } from 'react'
 import { Card } from '@sanity/ui'
 import { EditorConfig, EditorProvider } from '@portabletext/editor'
 import { StyledPortableTextEditable } from './StyledPortableTextEditable'
@@ -15,6 +7,7 @@ import CustomEventListenerPlugin from './event-listener-plugin/CustomEventListen
 import renderDecorator from './portable-text-configs/renderDecorators'
 import renderStyle from './portable-text-configs/renderStyle'
 import CustomToolbar from './toolbar/CustomToolbar'
+import LoadingIndicator from '../../LoadingIndicator'
 
 interface ContentPortableTextInputProps {
   /** used for initial value */
@@ -46,7 +39,6 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
   // * MISC
   const _id = useFormValue(['_id']) as string
   const _type = useFormValue(['_type']) as string
-  const { patch } = useDocumentOperation(getPublishedId(_id), _type)
 
   // * INITIAL CONFIG FOR EDITOR PROVIDER
   const initialConfig = useRef<EditorConfig>({
@@ -68,19 +60,28 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
   })
 
   return (
-    <Card shadow={1} style={{ height: '100%' }} tone={'default'}>
-      <EditorProvider initialConfig={initialConfig.current}>
-        <CustomEventListenerPlugin _id={_id} _type={_type} path={props.path} />
-        <CustomToolbar />
+    <Suspense fallback={<LoadingIndicator />}>
+      <Card
+        shadow={1}
+        style={{
+          height: 'stretch !important',
+        }}
+        tone={'default'}
+        id={`portable-text-${pathToString(props.path)}`}
+      >
+        <EditorProvider initialConfig={initialConfig.current}>
+          <CustomEventListenerPlugin _id={_id} _type={_type} path={props.path} />
+          <CustomToolbar />
 
-        <StyledPortableTextEditable
-          renderStyle={renderStyle}
-          renderDecorator={renderDecorator}
-          renderBlock={(props) => <div>{props.children}</div>}
-          renderListItem={(props) => <>{props.children}</>}
-        />
-      </EditorProvider>
-    </Card>
+          <StyledPortableTextEditable
+            renderStyle={renderStyle}
+            renderDecorator={renderDecorator}
+            renderBlock={(props) => <div>{props.children}</div>}
+            renderListItem={(props) => <>{props.children}</>}
+          />
+        </EditorProvider>
+      </Card>
+    </Suspense>
   )
 }
 

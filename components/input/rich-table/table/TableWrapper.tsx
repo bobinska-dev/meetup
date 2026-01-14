@@ -4,4 +4,6 @@ import styled from 'styled-components'
 export default styled(Box)`
   overflow-y: auto;
   overflow-x: scroll;
+  display: block;
+  max-width: 100%;
 `

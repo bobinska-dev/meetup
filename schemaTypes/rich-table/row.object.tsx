@@ -2,6 +2,7 @@ import { defineField, defineType, ObjectItem } from 'sanity'
 import { RichTableCellType } from './cell.object'
 
 export type RichTableRowType = ObjectItem & {
+  title?: string
   cells?: Array<RichTableCellType>
 }
 
@@ -10,6 +11,12 @@ export default defineType({
   title: 'Rich Table Row',
   type: 'object',
   fields: [
+    defineField({
+      name: 'title',
+      title: 'Title',
+      type: 'string',
+      description: 'Optional title for the row.',
+    }),
     defineField({
       name: 'cells',
       title: 'Cells',

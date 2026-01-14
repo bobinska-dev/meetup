@@ -1,5 +1,14 @@
-import { ComponentType, Suspense } from 'react'
-import { ObjectInputProps, ObjectSchemaType, useFormValue } from 'sanity'
+import { ComponentType, Suspense, useMemo } from 'react'
+import {
+  ArrayOfObjectsFormNode,
+  ArrayOfObjectsItemMember,
+  FieldMember,
+  ObjectFormNode,
+  ObjectInputProps,
+  ObjectItem,
+  ObjectSchemaType,
+  useFormValue,
+} from 'sanity'
 import { Stack } from '@sanity/ui'
 import LoadingIndicator from '../../LoadingIndicator'
 import { RichTableRowType } from '../../../schemaTypes/rich-table/row.object'
@@ -9,7 +18,7 @@ import TableWrapper from './table/TableWrapper'
 
 export interface RichTableType {
   rows: Array<RichTableRowType> | undefined
-  columnHeaders?: Array<ColumnHeader>
+  columnHeaders?: Array<ColumnHeader & ObjectItem>
 }
 
 const RichTableInput: ComponentType<ObjectInputProps<RichTableType, ObjectSchemaType>> = (
@@ -17,6 +26,27 @@ const RichTableInput: ComponentType<ObjectInputProps<RichTableType, ObjectSchema
 ) => {
   const _id = useFormValue(['_id']) as string
   const _type = useFormValue(['_type']) as string
+
+  // prepare members for TanStack Table
+  const tableObjectMembers = useMemo(() => props.members as FieldMember[], [props.members])
+
+  const rowsFieldMember = useMemo(() => {
+    return tableObjectMembers?.find(
+      (member) => member.name === 'rows',
+    ) as FieldMember<ArrayOfObjectsFormNode>
+  }, [tableObjectMembers])
+
+  // TODO: type this properly
+  const rowMembersWithCellMembers = useMemo(() => {
+    return rowsFieldMember?.field.members.map(
+      // @ts-ignore
+      (item: ArrayOfObjectsItemMember) =>
+        (item.item.members as FieldMember<ObjectFormNode>[]).find(
+          (member) => member.name === 'cells',
+        )?.field.members,
+    ) as (ArrayOfObjectsItemMember[] | undefined)[]
+  }, [rowsFieldMember])
+
   return (
     <Stack space={4}>
       <Suspense fallback={<LoadingIndicator />} name={'RichTableInput Suspense'}>
@@ -28,6 +58,8 @@ const RichTableInput: ComponentType<ObjectInputProps<RichTableType, ObjectSchema
             _id={_id}
             path={props.path}
             columnHeaders={props.value?.columnHeaders}
+            rowMembersWithCellMembers={rowMembersWithCellMembers}
+            onChange={props.onChange}
           />
         </TableWrapper>
       </Suspense>
