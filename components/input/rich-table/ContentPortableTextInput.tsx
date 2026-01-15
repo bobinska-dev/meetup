@@ -76,8 +76,11 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
           <StyledPortableTextEditable
             renderStyle={renderStyle}
             renderDecorator={renderDecorator}
-            renderBlock={(props) => <div>{props.children}</div>}
-            renderListItem={(props) => <>{props.children}</>}
+            renderBlock={(props) => <p>{props.children}</p>}
+            renderListItem={(props) => <li>{props.children}</li>}
+            renderAnnotation={(props) => (
+              <span style={{ textDecoration: 'underline' }}>{props.children}</span>
+            )}
           />
         </EditorProvider>
       </Card>

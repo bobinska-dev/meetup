@@ -4,6 +4,10 @@ import { Card } from '@sanity/ui'
 export default styled(Card)`
   display: block;
   max-width: 100%;
+  position: relative;
+  top: 0;
+  left: 0;
+  overflow: visible;
 `
 
 export const TableWidthCard = styled(Card)<{ $tableWidth: number | undefined }>`
