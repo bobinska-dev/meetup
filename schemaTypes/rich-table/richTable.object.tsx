@@ -1,13 +1,13 @@
 import { defineArrayMember, defineField, defineType, ObjectInputProps } from 'sanity'
-import RichTableInput from '../../components/input/rich-table/RichTableInput'
 import { ComponentType } from 'react'
+import CustomRichTableInput from '../../components/input/rich-table/custom-table'
 
 export default defineType({
   name: 'richTable',
   title: 'Rich Table',
   type: 'object',
   components: {
-    input: RichTableInput as ComponentType<ObjectInputProps>,
+    input: CustomRichTableInput as ComponentType<ObjectInputProps>,
   },
   fields: [
     defineField({

@@ -1,4 +1,11 @@
-import { ArrayDefinition, ArraySchemaType, InputProps, pathToString, PortableTextBlock, useFormValue } from 'sanity'
+import {
+  ArrayDefinition,
+  ArraySchemaType,
+  InputProps,
+  pathToString,
+  PortableTextBlock,
+  useFormValue,
+} from 'sanity'
 import { ComponentType, Suspense, useRef } from 'react'
 import { Card } from '@sanity/ui'
 import { EditorConfig, EditorProvider } from '@portabletext/editor'
@@ -8,6 +15,7 @@ import renderDecorator from './portable-text-configs/renderDecorators'
 import renderStyle from './portable-text-configs/renderStyle'
 import CustomToolbar from './toolbar/CustomToolbar'
 import LoadingIndicator from '../../LoadingIndicator'
+import { useFullscreenPTE } from './hooks/useFullScreenPTE'
 
 interface ContentPortableTextInputProps {
   /** used for initial value */
@@ -35,6 +43,9 @@ interface ContentPortableTextInputProps {
   schemaType?: ArraySchemaType<PortableTextBlock> | ArrayDefinition
 }
 
+/** # ContentPortableTextInput
+ * A Portable Text Input component for the rich table solution.
+ */
 const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (props) => {
   // * MISC
   const _id = useFormValue(['_id']) as string
@@ -59,15 +70,18 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
         },
   })
 
+  // TODO: fullscreen handling
+  const { getFullscreenPath, setFullscreenPath } = useFullscreenPTE()
+
   return (
     <Suspense fallback={<LoadingIndicator />}>
       <Card
-        shadow={1}
         style={{
           height: 'stretch !important',
         }}
         tone={'default'}
         id={`portable-text-${pathToString(props.path)}`}
+        border
       >
         <EditorProvider initialConfig={initialConfig.current}>
           <CustomEventListenerPlugin _id={_id} _type={_type} path={props.path} />
@@ -76,7 +90,7 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
           <StyledPortableTextEditable
             renderStyle={renderStyle}
             renderDecorator={renderDecorator}
-            renderBlock={(props) => <p>{props.children}</p>}
+            renderBlock={(props) => <div style={{ padding: '5px 0' }}>{props.children}</div>}
             renderListItem={(props) => <li>{props.children}</li>}
             renderAnnotation={(props) => (
               <span style={{ textDecoration: 'underline' }}>{props.children}</span>
