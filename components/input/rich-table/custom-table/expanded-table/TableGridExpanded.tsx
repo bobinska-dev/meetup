@@ -5,6 +5,7 @@ import styled from 'styled-components'
  */
 export default styled(Card)<{ $columnCount: number; $rowCount: number }>`
   display: grid !important;
+
   grid-template-columns: ${(props) =>
     props.$columnCount
       ? props.$columnCount <= 1
@@ -12,9 +13,11 @@ export default styled(Card)<{ $columnCount: number; $rowCount: number }>`
         : `2rem repeat(${props.$columnCount - 1}, 1fr)`
       : '2rem repeat(4, 1fr)'};
   grid-template-rows: ${(props) =>
-    props.$rowCount ? `repeat(${props.$rowCount}, auto);` : 'repeat(1, auto);'};
-
+    props.$rowCount
+      ? props.$rowCount <= 1
+        ? 'minmax(0, 50px)'
+        : `minmax(0, 50px) repeat(${props.$rowCount - 1}, auto)`
+      : 'minmax(0, 50px) repeat(1, auto)'};
   min-width: 60vw;
-  grid-gap-x: 8px;
-  // add borders to the grid cells
+  min-height: 50vh;
 `

@@ -6,7 +6,7 @@ import {
   PortableTextBlock,
   useFormValue,
 } from 'sanity'
-import { ComponentType, Suspense, useRef } from 'react'
+import { ComponentType, Suspense, useRef, useState } from 'react'
 import { Card } from '@sanity/ui'
 import { EditorConfig, EditorProvider } from '@portabletext/editor'
 import { StyledPortableTextEditable } from './StyledPortableTextEditable'
@@ -51,6 +51,7 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
   const _id = useFormValue(['_id']) as string
   const _type = useFormValue(['_type']) as string
 
+  const [focus, setFocus] = useState<boolean>(false)
   // * INITIAL CONFIG FOR EDITOR PROVIDER
   const initialConfig = useRef<EditorConfig>({
     initialValue: props.value,
@@ -72,20 +73,17 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
 
   // TODO: fullscreen handling
   const { getFullscreenPath, setFullscreenPath } = useFullscreenPTE()
-
   return (
     <Suspense fallback={<LoadingIndicator />}>
       <Card
-        style={{
-          height: 'stretch !important',
-        }}
         tone={'default'}
         id={`portable-text-${pathToString(props.path)}`}
         border
+        style={{ position: 'relative' }}
       >
         <EditorProvider initialConfig={initialConfig.current}>
           <CustomEventListenerPlugin _id={_id} _type={_type} path={props.path} />
-          <CustomToolbar />
+          <CustomToolbar focus={focus} />
 
           <StyledPortableTextEditable
             renderStyle={renderStyle}
@@ -95,6 +93,8 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
             renderAnnotation={(props) => (
               <span style={{ textDecoration: 'underline' }}>{props.children}</span>
             )}
+            onFocus={() => setFocus(true)}
+            onBlur={() => setFocus(false)}
           />
         </EditorProvider>
       </Card>

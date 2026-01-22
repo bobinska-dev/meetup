@@ -1,9 +1,8 @@
 import { ComponentType } from 'react'
-import TableButtons from './TableButtons'
-import TableWrapper from './TableWrapper'
+import TableButtons from './../TableButtons'
+import TableWrapper from '.././TableWrapper'
 import { Box, Button, Flex, Text, Tooltip } from '@sanity/ui'
 import { ExpandIcon } from '@sanity/icons'
-import TableGrid from './TableGrid'
 import {
   ArrayOfObjectsFormNode,
   ArrayOfObjectsItemMember,
@@ -17,11 +16,12 @@ import {
   PortableTextBlock,
   SanityClient,
 } from 'sanity'
-import { ColumnHeader } from '../../../../schemaTypes/rich-table/columnHeader.object'
-import ColumnHeaderWithInput from './ColumnHeaderWithInput'
-import RowMenuButton from './RowMenuButton'
-import ContentPortableTextInput from '../ContentPortableTextInput'
-import { RichTableType } from '../RichTableInput'
+import { ColumnHeader } from '../../../../../schemaTypes/rich-table/columnHeader.object'
+import ColumnHeaderWithInput from './../ColumnHeaderWithInput'
+import RowMenuButton from './../RowMenuButton'
+import ContentPortableTextInput from '../../ContentPortableTextInput'
+import { RichTableType } from '../../RichTableInput'
+import TableGridExpanded from './TableGridExpanded'
 
 interface TableProps {
   columnCount: number
@@ -41,7 +41,7 @@ interface TableProps {
     | undefined
   )[]
 }
-const Table: ComponentType<TableProps> = ({
+const TableExpanded: ComponentType<TableProps> = ({
   columnCount,
   columnHeaderMembers,
   rowMembersWithCellMembers,
@@ -83,7 +83,7 @@ const Table: ComponentType<TableProps> = ({
           </Flex>
         )}
         {/* TABLE GRID */}
-        <TableGrid $columnCount={columnCount + 1} $rowCount={rowCount} paddingTop={4}>
+        <TableGridExpanded $columnCount={columnCount + 1} $rowCount={rowCount} paddingTop={4}>
           {/* HEADER ROW */}
           <div className={'placeholder-cell'} />
           {columnHeaderValue &&
@@ -137,9 +137,9 @@ const Table: ComponentType<TableProps> = ({
               )
             }),
           )}
-        </TableGrid>
+        </TableGridExpanded>
       </TableWrapper>
     </TableButtons>
   )
 }
-export default Table
+export default TableExpanded

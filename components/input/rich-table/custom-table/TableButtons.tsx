@@ -12,7 +12,7 @@ interface TableButtonsProps {
   children: ReactNode
   client: SanityClient
   columnCount: number
-  value: RichTableRowType[]
+  value: RichTableRowType[] | undefined
   _id: string
   columnHeaders?: ColumnHeader[]
 }

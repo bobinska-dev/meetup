@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Stack, Text, Tooltip } from '@sanity/ui'
+import { Button, Flex, Stack } from '@sanity/ui'
 import { ComponentType, Suspense, useCallback, useMemo, useState } from 'react'
 import {
   ArrayOfObjectsFormNode,
@@ -9,21 +9,16 @@ import {
   ObjectInputProps,
   ObjectItem,
   ObjectSchemaType,
+  pathToString,
   PortableTextBlock,
   useClient,
   useFormValue
 } from 'sanity'
 import { RichTableType } from '../RichTableInput'
 import LoadingIndicator from '../../../LoadingIndicator'
-import TableGrid from './TableGrid'
-import ContentPortableTextInput from '../ContentPortableTextInput'
-import TableWrapper from './TableWrapper'
-import TableButtons from './TableButtons'
 import { ColumnHeader } from '../../../../schemaTypes/rich-table/columnHeader.object'
-import ColumnHeaderWithInput from './ColumnHeaderWithInput'
-import { ExpandIcon } from '@sanity/icons'
 import TableDialog from './expanded-table/TableDialog'
-import RowMenuButton from './RowMenuButton'
+import Table from './Table'
 
 const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, ObjectSchemaType>> = (
   props,
@@ -35,7 +30,7 @@ const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, Object
   const client = useClient({ apiVersion: '2026-01-01' }).withConfig({
     requestTagPrefix: 'rich-table-input',
   })
-  const [openDialog, setOpenDialog] = useState(true)
+  const [openDialog, setOpenDialog] = useState(false)
   const handleOpen = useCallback(() => setOpenDialog(true), [])
   const handleClose = useCallback(() => setOpenDialog(false), [])
 
@@ -46,7 +41,7 @@ const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, Object
     return tableObjectMembers?.find(
       (member) => member.name === 'rows',
     ) as FieldMember<ArrayOfObjectsFormNode>
-  }, [tableObjectMembers])
+  }, [tableObjectMembers, value])
 
   const rowMembersWithCellMembers = useMemo(() => {
     return rowsFieldMember?.field.members.map(
@@ -56,7 +51,7 @@ const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, Object
           (member) => member.name === 'cells',
         )?.field.members,
     ) as (ArrayOfObjectsItemMember[] | undefined)[]
-  }, [rowsFieldMember])
+  }, [rowsFieldMember, value])
 
   // * Calculate column and row counts
   const columnCount = useMemo(
@@ -64,98 +59,75 @@ const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, Object
       value && value.rows ? Math.max(0, ...value.rows?.map((row) => row.cells?.length || 0)) : 1,
     [value],
   )
-  const rowCount = useMemo(() => (value && value.rows ? value.rows.length : 1), [])
+  const rowCount = useMemo(() => (value && value.rows ? value.rows.length : 1), [value])
 
   // * prepare ColumnHeaders
   const columnHeaderValue = useMemo(() => {
     return value?.columnHeaders || []
-  }, [value?.columnHeaders])
+  }, [value])
+
   const columnHeaderMembers = useMemo(() => {
     return tableObjectMembers?.find((member) => member.name === 'columnHeaders') as FieldMember<
       ArrayOfObjectsFormNode<Array<ColumnHeader & ObjectItem>, ArraySchemaType>
     >
-  }, [tableObjectMembers])
+  }, [tableObjectMembers, value])
   return (
     <Stack>
       <Suspense fallback={<LoadingIndicator />} name={'RichTableInput Suspense'}>
+        {(!value || !value.rows) && (
+          <Flex justify={'center'}>
+            <Button
+              text="Initialize table"
+              onClick={() =>
+                client
+                  .patch(_id)
+                  .set({
+                    [pathToString([...path, 'rows'])]: [
+                      {
+                        _type: 'row',
+                        cells: [
+                          {
+                            _type: 'richTableCell',
+                            content: [
+                              {
+                                _type: 'block',
+                                markDefs: [],
+                                children: [{ _type: 'span', text: '', marks: [] }],
+                              },
+                            ] as unknown as PortableTextBlock[],
+                          },
+                        ],
+                      },
+                    ],
+                    [pathToString([...path, 'columnHeaders'])]: [
+                      {
+                        _type: 'columnHeader',
+                        title: `New column title`,
+                        cellIndex: 0,
+                      },
+                    ],
+                  })
+                  .commit({ autoGenerateArrayKeys: true })
+                  .then((res) => console.log('Table initialized', res))
+                  .catch(console.error)
+              }
+            />
+          </Flex>
+        )}
         {value?.rows && (
-          <TableButtons
+          <Table
+            value={value}
+            fieldPath={path}
+            onChange={onChange}
             columnCount={columnCount}
-            value={value?.rows}
-            client={client}
+            rowCount={rowCount}
             _id={_id}
-            path={path}
-            columnHeaders={value.columnHeaders}
-          >
-            <TableWrapper padding={4} shadow={1} radius={2} tone={'default'}>
-              <Flex
-                justify={'flex-end'}
-                style={{ position: 'absolute', top: '40px', right: '60px', zIndex: 99 }}
-              >
-                <Tooltip
-                  content={
-                    <Box>
-                      <Text>Expand table</Text>
-                    </Box>
-                  }
-                  portal
-                >
-                  <Button icon={ExpandIcon} onClick={handleOpen} mode={'ghost'} />
-                </Tooltip>
-              </Flex>
-              <TableGrid $columnCount={columnCount + 1} $rowCount={rowCount}>
-                <div className={'colPlacerholder'} />
-                {columnHeaderValue &&
-                  columnHeaderMembers?.field.members.map((colHeaderMember, index) => {
-                    const colHeaderItem = (colHeaderMember as ArrayOfObjectsItemMember).item
-                    const colHeaderItemValue = colHeaderItem.value as ColumnHeader & ObjectItem
-
-                    return (
-                      <ColumnHeaderWithInput
-                        columnHeader={colHeaderItemValue}
-                        _id={_id}
-                        client={client}
-                        path={path}
-                        key={colHeaderItemValue._key}
-                        columnIndex={index}
-                      />
-                    )
-                  })}
-
-                {rowMembersWithCellMembers?.map((row, rowIndex) =>
-                  row?.map((cell, cellIndex) => {
-                    const cellItem = cell.item
-                    const cellPTEPath = cellItem.path.concat('content')
-                    const cellValue = (
-                      cellItem.value as ObjectItem & {
-                        content: PortableTextBlock[]
-                      }
-                    )?.content
-                    // console.log(cell)
-                    return (
-                      <>
-                        {cellIndex === 0 && (
-                          <RowMenuButton
-                            rowIndex={rowIndex}
-                            path={path}
-                            _id={_id}
-                            client={client}
-                            rowKey={''}
-                          />
-                        )}
-                        <ContentPortableTextInput
-                          onChange={props.onChange}
-                          path={cellPTEPath}
-                          value={cellValue}
-                          key={cell.item.id}
-                        />
-                      </>
-                    )
-                  }),
-                )}
-              </TableGrid>
-            </TableWrapper>
-          </TableButtons>
+            client={client}
+            handleOpen={handleOpen}
+            columnHeaderValue={columnHeaderValue}
+            columnHeaderMembers={columnHeaderMembers}
+            rowMembersWithCellMembers={rowMembersWithCellMembers}
+          />
         )}
       </Suspense>
       {openDialog && (

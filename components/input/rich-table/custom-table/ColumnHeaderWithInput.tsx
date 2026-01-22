@@ -64,6 +64,7 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
   )
 }
 const StyledCard = styled(Card)<{ $isFocused?: boolean }>`
+  max-height: 50px;
   border: unset;
   [data-border] {
     box-shadow: unset;

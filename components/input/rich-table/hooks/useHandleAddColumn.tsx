@@ -59,7 +59,7 @@ export default function useHandleAddColumn({
     const newColumnHeaderItem: ColumnHeader & { _type: string } = {
       _type: 'columnHeader',
       title: `New column ${columnHeaders ? columnHeaders.length + 1 : ''}`,
-      cellIndex: maxCellCountAllRows,
+      cellIndex: maxCellCountAllRows ?? 0,
     }
 
     // If there are no rows yet, create the first row and set missing arrays

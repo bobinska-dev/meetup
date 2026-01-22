@@ -32,7 +32,7 @@ export default function useHandleAddRow({
   return useCallback(async () => {
     // Create an array of empty cells for the new row.
     const cells: Omit<RichTableCellType, '_key'>[] = Array.from(
-      { length: maxCellCountAllRows },
+      { length: maxCellCountAllRows ?? 1 },
       () => {
         return {
           _type: 'richTableCell',

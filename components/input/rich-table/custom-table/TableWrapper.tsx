@@ -5,6 +5,4 @@ import styled from 'styled-components'
  */
 export default styled(Card)`
   overflow-x: scroll;
-  //min-width: 60vw;
-  /* inner right shadow */
 `
