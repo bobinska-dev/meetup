@@ -7,7 +7,7 @@ import { createColumnHelper, getCoreRowModel, useReactTable } from '@tanstack/re
 import useHandleAddColumn from '../hooks/useHandleAddColumn'
 import useHandleAddRow from '../hooks/useHandleAddRow'
 import { RichTableRowType } from '../../../../schemaTypes/rich-table/row.object'
-import ContentPortableTextInput from '../ContentPortableTextInput'
+import ContentPortableTextInput from '../../clean-rich-table/portable-text/ContentPortableTextEditor'
 import { TableWidthCard } from './TableCard'
 import TanTable from './TanTable'
 import ColumnHeaderWithInput from './ColumnHeaderWithInput'

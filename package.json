@@ -20,8 +20,10 @@
     "sanity"
   ],
   "dependencies": {
+    "@floating-ui/react-dom": "^2.1.6",
     "@portabletext/editor": "^4.2.4",
     "@portabletext/keyboard-shortcuts": "^2.1.2",
+    "@portabletext/plugin-typeahead-picker": "^2.0.2",
     "@portabletext/react": "^6.0.2",
     "@portabletext/toolbar": "^5.0.14",
     "@sanity/assist": "^5.0.3",
@@ -30,6 +32,7 @@
     "@sanity/document-internationalization": "^4.1.1",
     "@sanity/vision": "^5.5.0",
     "@tanstack/react-table": "^8.21.3",
+    "fuse.js": "^7.1.0",
     "groq": "^5.2.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",

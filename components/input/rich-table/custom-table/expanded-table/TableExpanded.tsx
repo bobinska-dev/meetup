@@ -19,7 +19,7 @@ import {
 import { ColumnHeader } from '../../../../../schemaTypes/rich-table/columnHeader.object'
 import ColumnHeaderWithInput from './../ColumnHeaderWithInput'
 import RowMenuButton from './../RowMenuButton'
-import ContentPortableTextInput from '../../ContentPortableTextInput'
+import ContentPortableTextInput from '../../../clean-rich-table/portable-text/ContentPortableTextEditor'
 import { RichTableType } from '../../RichTableInput'
 import TableGridExpanded from './TableGridExpanded'
 

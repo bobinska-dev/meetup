@@ -1,7 +1,7 @@
 import React, { KeyboardEvent, useEffect, useState } from 'react'
 import { Button, Card, Flex, Text } from '@sanity/ui'
 
-type TableSize = { rows: number; cols: number }
+export type TableSize = { rows: number; cols: number }
 
 interface InitialiseTableProps {
   maxRows?: number
