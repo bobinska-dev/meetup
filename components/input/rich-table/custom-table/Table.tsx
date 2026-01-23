@@ -113,7 +113,9 @@ const Table: ComponentType<TableProps> = ({
                   content: PortableTextBlock[]
                 }
               )?.content
-
+              const cellValueNew = value.rows?.[rowIndex]?.cells?.[cellIndex]?.content
+              const rowKey = value.rows?.[rowIndex]?._key ?? ''
+              console.log('TABLE ::: cellValueNew', cellValueNew, 'cellValue', cellValue)
               return (
                 <>
                   {/* CONTEXT MENU BUTTON */}
@@ -123,14 +125,14 @@ const Table: ComponentType<TableProps> = ({
                       path={fieldPath}
                       _id={_id}
                       client={client}
-                      rowKey={''}
+                      rowKey={rowKey}
                     />
                   )}
                   {/* PTE CELL CONTENT */}
                   <ContentPortableTextInput
                     onChange={onChange}
                     path={cellPTEPath}
-                    value={cellValue}
+                    value={cellValueNew}
                     key={cell.item.id}
                   />
                 </>

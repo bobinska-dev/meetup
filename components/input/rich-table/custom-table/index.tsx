@@ -19,6 +19,7 @@ import LoadingIndicator from '../../../LoadingIndicator'
 import { ColumnHeader } from '../../../../schemaTypes/rich-table/columnHeader.object'
 import TableDialog from './expanded-table/TableDialog'
 import Table from './Table'
+import InitialiseTable from '../InitialiseTable'
 
 const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, ObjectSchemaType>> = (
   props,
@@ -35,23 +36,18 @@ const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, Object
   const handleClose = useCallback(() => setOpenDialog(false), [])
 
   // * Prepare members
-  const tableObjectMembers = useMemo(() => props.members as FieldMember[], [props.members])
+  const tableObjectMembers = props.members as FieldMember[]
 
-  const rowsFieldMember = useMemo(() => {
-    return tableObjectMembers?.find(
-      (member) => member.name === 'rows',
-    ) as FieldMember<ArrayOfObjectsFormNode>
-  }, [tableObjectMembers, value])
+  const rowsFieldMember = tableObjectMembers?.find(
+    (member) => member.name === 'rows',
+  ) as FieldMember<ArrayOfObjectsFormNode>
 
-  const rowMembersWithCellMembers = useMemo(() => {
-    return rowsFieldMember?.field.members.map(
-      // @ts-ignore
-      (item: ArrayOfObjectsItemMember) =>
-        (item.item.members as FieldMember<ObjectFormNode>[]).find(
-          (member) => member.name === 'cells',
-        )?.field.members,
-    ) as (ArrayOfObjectsItemMember[] | undefined)[]
-  }, [rowsFieldMember, value])
+  const rowMembersWithCellMembers = rowsFieldMember?.field.members.map(
+    // @ts-ignore
+    (item: ArrayOfObjectsItemMember) =>
+      (item.item.members as FieldMember<ObjectFormNode>[]).find((member) => member.name === 'cells')
+        ?.field.members,
+  ) as (ArrayOfObjectsItemMember[] | undefined)[]
 
   // * Calculate column and row counts
   const columnCount = useMemo(
@@ -66,11 +62,11 @@ const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, Object
     return value?.columnHeaders || []
   }, [value])
 
-  const columnHeaderMembers = useMemo(() => {
-    return tableObjectMembers?.find((member) => member.name === 'columnHeaders') as FieldMember<
-      ArrayOfObjectsFormNode<Array<ColumnHeader & ObjectItem>, ArraySchemaType>
-    >
-  }, [tableObjectMembers, value])
+  const columnHeaderMembers = tableObjectMembers?.find(
+    (member) => member.name === 'columnHeaders',
+  ) as FieldMember<ArrayOfObjectsFormNode<Array<ColumnHeader & ObjectItem>, ArraySchemaType>>
+
+  console.log('index value', value)
   return (
     <Stack>
       <Suspense fallback={<LoadingIndicator />} name={'RichTableInput Suspense'}>
@@ -114,6 +110,7 @@ const CustomRichTableInput: ComponentType<ObjectInputProps<RichTableType, Object
             />
           </Flex>
         )}
+        {(!value || !value?.rows) && <InitialiseTable />}
         {value?.rows && (
           <Table
             value={value}
