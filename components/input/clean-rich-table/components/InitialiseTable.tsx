@@ -10,16 +10,22 @@ import { ColumnHeader } from '../../../../schemaTypes/rich-table/columnHeader.ob
 type TableSize = { rows: number; cols: number }
 
 interface InitialiseTableProps {
+  /** Maximum number of rows to display in the size picker */
   maxRows?: number
+  /** Maximum number of columns to display in the size picker */
   maxCols?: number
   client: SanityClient
   path: string
   _id: string
-  // optional label or small help text
+  isInPortableText?: boolean
 }
 
 const CELL_SIZE = 28
 const GAP = 6
+
+// TODO: add spinner or some other indictor after selection of table size -> atm this is taking too long for the UI to update after patch is gone through
+// -> also maybe add toast notification on success / error
+// TODO: add a way to create a document when doc was newly created -> _id is available but no way to check if doc exists yet or not
 
 const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   maxRows = 10,
@@ -27,6 +33,7 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   client,
   path,
   _id,
+  isInPortableText,
 }) => {
   const _type = useFormValue(['_type']) as string
   // * STATES
@@ -65,10 +72,13 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
           cellIndex: cols ? cols - 1 : 0,
         }),
       )
+      // TODO: add _type for portable text blocks -> Error shows "Block with key uKUSe7ggQXp6fRmiItwuNZ is missing a type name."
+      const patchWithType = { [path]: { rows, columnHeaders, _type: 'richTable' } }
+      const patchWithoutType = { [path]: { rows, columnHeaders } }
       // Commit the new table structure to Sanity
       await client
         .patch(_id)
-        .set({ [path]: { rows, columnHeaders } })
+        .set(isInPortableText ? patchWithType : patchWithoutType)
         .commit({ autoGenerateArrayKeys: true })
         .then((res) => console.log(res))
         .catch(console.error)

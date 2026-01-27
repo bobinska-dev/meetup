@@ -99,7 +99,7 @@ const Table: ComponentType<
                 const cellPTEPath = cellItem.path.concat('content')
                 const cellValue = value?.rows?.[rowIndex]?.cells?.[cellIndex]?.content
                 const rowKey = value?.rows?.[rowIndex]?._key ?? ''
-
+                // TODO: Add row titles and combine with context menu -> possibly input for titles using a small modal and display them vertically
                 return (
                   <>
                     {/* CONTEXT MENU BUTTON */}

@@ -8,8 +8,10 @@ import Table from './components/Table'
 import { ExpandIcon } from '@sanity/icons'
 import ExpandedTableDialog from './components/ExpandedTableDialog'
 
-// TODO: read only for new documents that do not yet exist
-const RichTable: ComponentType<ObjectInputProps<RichTableType>> = (props) => {
+// TODO: read only for new documents that do not yet exist OR way to detect if document has yet to be created
+const RichTable: ComponentType<ObjectInputProps<RichTableType> & { isInPortableText?: boolean }> = (
+  props,
+) => {
   const client = useClient({ apiVersion: '2026-01-01' }).withConfig({
     requestTagPrefix: 'rich-table-input',
   })
@@ -25,8 +27,15 @@ const RichTable: ComponentType<ObjectInputProps<RichTableType>> = (props) => {
   return (
     <Stack space={4}>
       <Suspense fallback={<LoadingIndicator />} name={'RichTableInput Suspense'}>
-        {!props.value && <InitialiseTable _id={_id} client={client} path={pathString} />}
-        {props.value && (
+        {!props.value?.rows && (
+          <InitialiseTable
+            _id={_id}
+            client={client}
+            path={pathString}
+            isInPortableText={props.isInPortableText}
+          />
+        )}
+        {props.value && props.value.rows && (
           <>
             <Box>
               {/* EXPAND TABLE BUTTON */}

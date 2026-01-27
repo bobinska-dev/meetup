@@ -42,7 +42,7 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
       .then((res) => console.log(res))
       .catch(console.error)
   }, [title, _id, columnHeader._key])
-
+  // TODO ADD KEY WITH OPEN DIALOG TO FORCE REMOUNT
   return (
     <StyledCard shadow={isFocused ? 1 : undefined} tone={isFocused ? 'primary' : undefined}>
       <TextInput

@@ -1,11 +1,13 @@
 import { defineArrayMember, defineField, defineType, ObjectInputProps } from 'sanity'
 import { ComponentType } from 'react'
 import RichTableInput from '../../components/input/clean-rich-table/index'
+import { TbTable } from 'react-icons/tb'
 
 export default defineType({
   name: 'richTable',
   title: 'Rich Table',
   type: 'object',
+  icon: TbTable,
   components: {
     input: RichTableInput as ComponentType<ObjectInputProps>,
   },
@@ -34,4 +36,10 @@ export default defineType({
       ],
     }),
   ],
+  preview: {
+    prepare: () => ({
+      title: 'Rich Table',
+      icon: TbTable,
+    }),
+  },
 })

@@ -1,7 +1,6 @@
 import { defineArrayMember, defineType, ObjectInputProps } from 'sanity'
-import { Card } from '@sanity/ui'
-import CustomRichTableInput from '../../components/input/rich-table/custom-table'
-import { ComponentType } from 'react'
+import { Stack } from '@sanity/ui'
+import RichTableInput from '../../components/input/clean-rich-table/index'
 
 export default defineType({
   name: 'body',
@@ -24,9 +23,18 @@ export default defineType({
       type: 'richTable',
       components: {
         block: (props) => {
-          return <Card>{props.children}</Card>
+          return (
+            <Stack>
+              {props.renderDefault({ ...props })}
+              {/*<Card shadow={1}>{props.children}</Card>*/}
+              {/*  TODO: add preview here, but without inline editing */}
+            </Stack>
+          )
         },
-        input: CustomRichTableInput as ComponentType<ObjectInputProps>,
+        // TODO: fix this
+        input: function RichTablePortableInput(props: ObjectInputProps) {
+          return <RichTableInput {...(props as any)} isInPortableText={true} />
+        },
       },
     }),
   ],
