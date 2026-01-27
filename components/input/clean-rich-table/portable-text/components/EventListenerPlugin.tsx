@@ -41,10 +41,10 @@ const CustomListenerPlugin: ComponentType<{
         }
 
         // * HANDLE SELECTION EVENTS
-        if (event.type === 'selection') {
+        /*if (event.type === 'selection') {
           // show toolbar on selection change above the selection
           console.log('Selection changed:', event)
-        }
+        }*/
       }}
     />
   )

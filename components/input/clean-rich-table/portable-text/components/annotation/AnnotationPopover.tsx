@@ -1,37 +1,85 @@
-import { ComponentType, ReactElement, RefObject, useCallback, useEffect, useState } from 'react'
-import { useAnnotationPopover, useToolbarSchema } from '@portabletext/toolbar'
-import extendDecorator from '../../configs/extendDecorators'
-import extendStyle from '../../configs/extendStyles'
+import { ComponentType, useState } from 'react'
+import { ToolbarAnnotationSchemaType, useAnnotationPopover } from '@portabletext/toolbar'
+import { Box, Button, Flex, Popover, Stack, Text } from '@sanity/ui'
+import { EditIcon, TrashIcon } from '@sanity/icons'
+import AnnotationDialog from './AnnotationDialog'
 
 const AnnotationPopover: ComponentType<{
-  children: ReactElement
-  content: ReactElement
-  title: string
-  ref: RefObject<null>
-  annotationValue: any
+  schemaTypes: ReadonlyArray<ToolbarAnnotationSchemaType>
 }> = (props) => {
-  const { ref, annotationValue } = props
+  const annotationPopover = useAnnotationPopover(props)
   const [open, setOpen] = useState(false)
-  const handleToggleOpenClose = useCallback(() => {
-    setOpen(!open)
-  }, [])
-  const [value, setValue] = useState<string>(annotationValue.href as string)
-  const toolbarSchema = useToolbarSchema({
-    extendDecorator,
-    extendStyle,
-  })
-  const annotationPopover = useAnnotationPopover({ schemaTypes: toolbarSchema.annotations! })
 
-  useEffect(() => {
-    // close popover when clicking outside
-    const handleClickOutside = (event: MouseEvent) => {
-      if (ref.current && !(ref.current as any).contains(event.target)) {
-        setOpen(false)
+  if (
+    annotationPopover.snapshot.matches('disabled') ||
+    annotationPopover.snapshot.matches({ enabled: 'inactive' })
+  ) {
+    return null
+  }
+  // Cast the ref's current value to HTMLElement | null to satisfy the Popover prop type
+  const referenceEl = annotationPopover.snapshot.context.elementRef?.current as HTMLElement | null
+
+  // TODO: SOLVE ISSUE WITH ANNOTATION DIALOGS NOT OPENING CORRECTLY FROM POPOVER ITEMS
+  return (
+    <Popover
+      content={
+        <Stack space={3} padding={3}>
+          {annotationPopover.snapshot.context.annotations.map((annotation, index) => (
+            <Box key={annotation.value._key}>
+              <Stack>
+                <Flex justify={'space-between'} align={'center'} gap={3}>
+                  <Text size={1}>{annotation.schemaType.title}</Text>
+                  <Button
+                    icon={EditIcon}
+                    mode={'bleed'}
+                    fontSize={0}
+                    padding={0}
+                    onClick={() => setOpen(true)}
+                  />
+                  <Button
+                    icon={TrashIcon}
+                    mode={'bleed'}
+                    padding={0}
+                    fontSize={0}
+                    onClick={() => {
+                      annotationPopover.send({
+                        type: 'remove',
+                        schemaType: annotation.schemaType,
+                      })
+                    }}
+                  />
+                </Flex>
+              </Stack>
+
+              {open && (
+                <AnnotationDialog
+                  annotation={annotation}
+                  key={annotation.value._key}
+                  onSubmit={({ value }) => {
+                    annotationPopover.send({
+                      type: 'edit',
+                      at: annotation.at,
+                      props: value,
+                    })
+                    setOpen(false)
+                  }}
+                  onClose={() => {
+                    setOpen(false)
+                    return annotationPopover.send({ type: 'close' })
+                  }}
+                />
+              )}
+            </Box>
+          ))}
+        </Stack>
       }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [ref])
+      arrow
+      open
+      referenceElement={referenceEl}
+      floatingBoundary={referenceEl}
+      placement={'top'}
+      preventOverflow={false}
+    />
+  )
 }
+export default AnnotationPopover

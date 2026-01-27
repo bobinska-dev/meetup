@@ -1,0 +1,56 @@
+import { ComponentType, useState } from 'react'
+import { ToolbarAnnotationSchemaType } from '@portabletext/toolbar'
+import { Button, Card, Dialog, Flex, Stack, Text, TextInput } from '@sanity/ui'
+import { AnnotationPath, PortableTextObject } from '@portabletext/editor'
+
+// TODO: Ask Bjørge for his input on rendering out the annotation inputs here
+const AnnotationDialog: ComponentType<{
+  annotation: {
+    value: PortableTextObject
+    schemaType: ToolbarAnnotationSchemaType
+    at: AnnotationPath
+  }
+  onSubmit: ({ value }: { value: { [key: string]: unknown } }) => void
+  onClose: () => void
+}> = (props) => {
+  const [value, setValue] = useState(
+    props.annotation.value || props.annotation.schemaType.defaultValues,
+  )
+  return (
+    <Dialog
+      id={'edit-annotation-dialog'}
+      header={'Edit ' + props.annotation.schemaType.title}
+      onClose={props.onClose}
+    >
+      <Stack padding={4}>
+        {props.annotation.schemaType.fields?.map((field, index) => {
+          if (field.type === 'string') {
+            return (
+              <Stack space={3} key={field.name}>
+                <Text as={'label'} size={0} htmlFor={field.name}>
+                  {field.title}
+                </Text>
+                <TextInput
+                  autoFocus={index === 0}
+                  value={value[field.name] as string}
+                  onChange={(e) => setValue({ ...value, [field.name]: e.currentTarget.value })}
+                  id={field.name}
+                  // TODO: add validation based on field definition
+                />
+              </Stack>
+            )
+          }
+          return (
+            <Card tone={'caution'} key={field.name}>
+              Input for {field.title} coming soon!
+            </Card>
+          )
+        })}
+        <Flex justify={'flex-end'} align={'center'} padding={3}>
+          <Button mode={'ghost'} onClick={() => props.onSubmit({ value })} text={'Done!'} />
+        </Flex>
+      </Stack>
+    </Dialog>
+  )
+}
+export default AnnotationDialog

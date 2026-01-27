@@ -7,6 +7,7 @@ import {
   TbH3,
   TbH4,
   TbH5,
+  TbH6,
   TbItalic,
   TbList,
   TbListNumbers,
@@ -29,6 +30,7 @@ export const H2Icon = () => <TbH2 />
 export const H3Icon = () => <TbH3 />
 export const H4Icon = () => <TbH4 />
 export const H5Icon = () => <TbH5 />
+export const H6Icon = () => <TbH6 />
 
 export const QuoteIcon = () => <TbQuote />
 export const ListIcon = () => <TbList />

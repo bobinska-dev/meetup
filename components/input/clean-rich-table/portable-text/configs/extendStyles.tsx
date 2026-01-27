@@ -1,5 +1,5 @@
 import { ExtendStyleSchemaType } from '@portabletext/toolbar'
-import { H1Icon, H2Icon, H3Icon, H4Icon, H5Icon, QuoteIcon, TextIcon } from '../icons'
+import { H1Icon, H2Icon, H3Icon, H4Icon, H5Icon, H6Icon, QuoteIcon, TextIcon } from '../icons'
 
 const extendStyle: ExtendStyleSchemaType = (style) => {
   // Apply updates to the schema, if needed
@@ -45,10 +45,17 @@ const extendStyle: ExtendStyleSchemaType = (style) => {
       icon: H5Icon,
     }
   }
+  if (style.name === 'h6') {
+    return {
+      ...style,
+      title: 'H6',
+      icon: H6Icon,
+    }
+  }
   if (style.name === 'blockquote') {
     return {
       ...style,
-      title: '"',
+      title: 'Quote',
       icon: QuoteIcon,
     }
   }

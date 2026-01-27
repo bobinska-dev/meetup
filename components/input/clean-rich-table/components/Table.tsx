@@ -1,4 +1,4 @@
-import { ComponentType } from 'react'
+import { ComponentType, Fragment } from 'react'
 import {
   ArrayOfObjectsFormNode,
   ArrayOfObjectsItemMember,
@@ -101,7 +101,7 @@ const Table: ComponentType<
                 const rowKey = value?.rows?.[rowIndex]?._key ?? ''
                 // TODO: Add row titles and combine with context menu -> possibly input for titles using a small modal and display them vertically
                 return (
-                  <>
+                  <Fragment key={cellItem.id}>
                     {/* CONTEXT MENU BUTTON */}
                     {cellIndex === 0 && (
                       <RowContextMenu
@@ -119,7 +119,7 @@ const Table: ComponentType<
                       value={cellValue}
                       key={cellItem.id}
                     />
-                  </>
+                  </Fragment>
                 )
               }),
             )}

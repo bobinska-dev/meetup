@@ -18,6 +18,7 @@ import { SlashCommandPickerPlugin } from './pte-slash-commands/SlashCommandPicke
 import { renderListItem } from './configs/renderer/renderListItem'
 import { renderAnnotation } from './configs/renderer/renderAnnotation'
 import { LinkPlugin } from './components/LinkPlugin'
+import ButtonToolbar from './components/context-menu-toolbar/ButtonToolbar'
 
 // import { useFullscreenPTE } from './hooks/useFullScreenPTE'
 
@@ -92,6 +93,7 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
           <SlashCommandPickerPlugin />
           <LinkPlugin />
           {/*<CustomToolbar focus={focus} />*/}
+          <ButtonToolbar />
 
           <StyledPortableTextEditable
             renderStyle={renderStyle}

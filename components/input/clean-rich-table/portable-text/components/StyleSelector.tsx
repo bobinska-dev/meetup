@@ -1,10 +1,10 @@
-import {ToolbarSchema, useStyleSelector} from '@portabletext/toolbar'
-import {ChevronDownIcon} from '@sanity/icons'
-import {Button, Card, Menu, MenuButton, MenuItem} from '@sanity/ui'
-import {ComponentType} from 'react'
+import { ToolbarSchema, useStyleSelector } from '@portabletext/toolbar'
+import { ChevronDownIcon } from '@sanity/icons'
+import { Button, Card, Menu, MenuButton, MenuItem } from '@sanity/ui'
+import { ComponentType } from 'react'
 
-const StyleSelector: ComponentType<{toolbarSchema: ToolbarSchema}> = ({toolbarSchema}) => {
-  const styleSelector = useStyleSelector({schemaTypes: toolbarSchema.styles || []})
+const StyleSelector: ComponentType<{ toolbarSchema: ToolbarSchema }> = ({ toolbarSchema }) => {
+  const styleSelector = useStyleSelector({ schemaTypes: toolbarSchema.styles || [] })
 
   const currentStyle = styleSelector.snapshot.context?.activeStyle
 
@@ -30,13 +30,14 @@ const StyleSelector: ComponentType<{toolbarSchema: ToolbarSchema}> = ({toolbarSc
         menu={
           <Menu>
             {toolbarSchema.styles?.map((style) => {
-              const styleButton = useStyleSelector({schemaTypes: [style]})
+              const styleButton = useStyleSelector({ schemaTypes: [style] })
               return (
                 <MenuItem
                   key={style.name}
-                  onClick={() => styleButton.send({type: 'toggle', style: style.name})}
+                  onClick={() => styleButton.send({ type: 'toggle', style: style.name })}
                   selected={currentStyle == style.name}
-                  text={style.icon ? <style.icon /> + style.title! : style.title}
+                  // text={style.title}
+                  icon={style.icon}
                   as={'button'}
                   padding={2}
                   tone={'default'}
@@ -45,7 +46,7 @@ const StyleSelector: ComponentType<{toolbarSchema: ToolbarSchema}> = ({toolbarSc
             })}
           </Menu>
         }
-        popover={{portal: true}}
+        popover={{ portal: true }}
       />
     </Card>
   )
