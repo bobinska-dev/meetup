@@ -2,6 +2,18 @@ import { ComponentType } from 'react'
 import { ToolbarListSchemaType, useListButton } from '@portabletext/toolbar'
 import { Button } from '@sanity/ui'
 
+/** Button component for toggling list styles in a rich text editor.
+ *
+ * @param list - `list`: {@link ToolbarListSchemaType} The list schema type defining the list style.
+ *
+ * ## Usage
+ * ```tsx
+ *  // in PTE toolbar
+ *  {toolbarSchema.lists?.map((list) => (
+ *    <ListButton key={list.name} list={list} />
+ *  ))}
+ * ```
+ */
 const ListButton: ComponentType<{ list: ToolbarListSchemaType }> = ({ list }) => {
   const listButton = useListButton({ schemaType: list })
 

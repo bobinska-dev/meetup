@@ -16,8 +16,17 @@ import AnnotationButton from './AnnotationButton'
 import ListButton from './ListButton'
 import AnnotationPopover from '../annotation/AnnotationPopover'
 
-interface ButtonToolbarProps {}
-const ButtonToolbar: ComponentType<ButtonToolbarProps> = () => {
+/** A floating button toolbar for rich text editing, providing access to styles, decorators, annotations, and lists.
+ *
+ * @returns A React component rendering a floating button that opens a toolbar popover for rich text editing.
+ *
+ * ## Usage
+ * ```tsx
+ *  // in the `EditorProvider` and before the `PortableTextEditable`
+ *  <ButtonToolbar />
+ * ```
+ */
+const ButtonToolbar: ComponentType = () => {
   const editor = useEditor()
   const toolbarSchema = useToolbarSchema({
     extendDecorator,

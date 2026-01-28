@@ -4,6 +4,21 @@ import { Button, Card, Dialog, Flex, Stack, Text, TextInput } from '@sanity/ui'
 import { AnnotationPath, PortableTextObject } from '@portabletext/editor'
 
 // TODO: Ask Bjørge for his input on rendering out the annotation inputs here
+/** Dialog component for editing an annotation's properties.
+ *
+ * @param annotation - `annotation`: {@link PortableTextObject} The annotation value to edit.
+ * @param onSubmit - `onSubmit: {(value: { [key: string]: unknown }) => void}` Callback when the user submits the dialog with the updated annotation value.
+ * @param onClose - `onClose: {() => void}` Callback when the user closes the dialog without submitting.
+ *
+ * ## Usage
+ * ```tsx
+ * <AnnotationDialog
+ *  annotation={annotation}
+ *  onSubmit={({value}) => handleAnnotationSubmit(value)}
+ *  onClose={() => handleClose()}
+ *  />
+ *  ```
+ */
 const AnnotationDialog: ComponentType<{
   annotation: {
     value: PortableTextObject

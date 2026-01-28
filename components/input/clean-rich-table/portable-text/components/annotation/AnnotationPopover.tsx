@@ -5,6 +5,18 @@ import { EditIcon, TrashIcon } from '@sanity/icons'
 import AnnotationDialog from './AnnotationDialog'
 import { AnnotationPath, PortableTextObject } from '@portabletext/editor'
 
+/** Popover component that shows the list of active annotations for the current selection.
+ *
+ * @param props - `schemaTypes`: {@link ToolbarAnnotationSchemaType} The array of annotation schema types available in the editor.
+ *
+ * ## Usage
+ * ```tsx
+ *   // in PTE toolbar attach this component
+ *   {toolbarSchema.annotations && <AnnotationPopover schemaTypes={toolbarSchema.annotations} />
+ *   }
+ * ```
+ *
+ */
 const AnnotationPopover: ComponentType<{
   schemaTypes: ReadonlyArray<ToolbarAnnotationSchemaType>
 }> = (props) => {
@@ -25,7 +37,6 @@ const AnnotationPopover: ComponentType<{
   // Cast the ref's current value to HTMLElement | null to satisfy the Popover prop type
   const referenceEl = annotationPopover.snapshot.context.elementRef?.current as HTMLElement | null
 
-  // TODO: SOLVE ISSUE WITH ANNOTATION DIALOGS NOT OPENING CORRECTLY FROM POPOVER ITEMS
   return (
     <Popover
       content={
@@ -61,7 +72,7 @@ const AnnotationPopover: ComponentType<{
               </Stack>
             </Box>
           ))}
-          {open && (
+          {open && openAnnotation && (
             <AnnotationDialog
               annotation={openAnnotation}
               key={openAnnotation.value._key}

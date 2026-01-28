@@ -2,6 +2,20 @@ import { ComponentType } from 'react'
 import { Box, Button, Text, Tooltip } from '@sanity/ui'
 import { ToolbarDecoratorSchemaType, useDecoratorButton } from '@portabletext/toolbar'
 
+/** Button component for toggling a text decorator (like bold or italic) in the Portable Text editor toolbar.
+ *
+ * @param decorator - `decorator`: {@link ToolbarDecoratorSchemaType} The schema definition for the decorator to be toggled.
+ *
+ * ## Usage
+ * ```tsx
+ *  // in PTE toolbar
+ *  {toolbarSchema.decorators &&
+ *    toolbarSchema.decorators?.map((decorator) => (
+ *      <DecoratorButton key={decorator.name} decorator={decorator} />
+ *  ))}
+ * ```
+ *
+ */
 const DecoratorButton: ComponentType<{ decorator: ToolbarDecoratorSchemaType }> = ({
   decorator,
 }) => {

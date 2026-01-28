@@ -2,6 +2,19 @@ import { ComponentType } from 'react'
 import { ToolbarAnnotationSchemaType, useAnnotationButton } from '@portabletext/toolbar'
 import { Button } from '@sanity/ui'
 
+/** Button component for toggling annotations in a rich text editor.
+ *
+ * @param annotation - `annotation`: {@link ToolbarAnnotationSchemaType} The annotation schema type defining the annotation.
+ *
+ * ## Usage
+ * ```tsx
+ * // in PTE toolbar
+ *  {toolbarSchema.annotations?.map((annotation) => (
+ *   <AnnotationButton key={annotation.name} annotation={annotation} />
+ *  ))}
+ * ```
+ *
+ */
 const AnnotationButton: ComponentType<{ annotation: ToolbarAnnotationSchemaType }> = ({
   annotation,
 }) => {

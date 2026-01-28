@@ -43,15 +43,6 @@ const AnnotationPopoverItem: ComponentType<AnnotationPopoverItem> = (props) => {
       </Stack>
 
       {open && (
-        /*<AnnotationDialog
-          annotation={annotation}
-          key={annotation.value._key}
-          onSubmit={({ value }) => onSubmit({ value })}
-          onClose={() => {
-            setOpen(false)
-            return closePopover
-          }}
-        />*/
         <Dialog
           id={'edit-annotation-dialog'}
           header={'Edit ' + props.annotation.schemaType.title}
