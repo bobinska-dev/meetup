@@ -3,12 +3,18 @@ import { ToolbarAnnotationSchemaType, useAnnotationPopover } from '@portabletext
 import { Box, Button, Flex, Popover, Stack, Text } from '@sanity/ui'
 import { EditIcon, TrashIcon } from '@sanity/icons'
 import AnnotationDialog from './AnnotationDialog'
+import { AnnotationPath, PortableTextObject } from '@portabletext/editor'
 
 const AnnotationPopover: ComponentType<{
   schemaTypes: ReadonlyArray<ToolbarAnnotationSchemaType>
 }> = (props) => {
   const annotationPopover = useAnnotationPopover(props)
   const [open, setOpen] = useState(false)
+  const [openAnnotation, setOpenAnnotation] = useState<{
+    value: PortableTextObject
+    schemaType: ToolbarAnnotationSchemaType
+    at: AnnotationPath
+  } | null>(null)
 
   if (
     annotationPopover.snapshot.matches('disabled') ||
@@ -34,7 +40,10 @@ const AnnotationPopover: ComponentType<{
                     mode={'bleed'}
                     fontSize={0}
                     padding={0}
-                    onClick={() => setOpen(true)}
+                    onClick={() => {
+                      setOpen(true)
+                      setOpenAnnotation(annotation)
+                    }}
                   />
                   <Button
                     icon={TrashIcon}
@@ -50,27 +59,26 @@ const AnnotationPopover: ComponentType<{
                   />
                 </Flex>
               </Stack>
-
-              {open && (
-                <AnnotationDialog
-                  annotation={annotation}
-                  key={annotation.value._key}
-                  onSubmit={({ value }) => {
-                    annotationPopover.send({
-                      type: 'edit',
-                      at: annotation.at,
-                      props: value,
-                    })
-                    setOpen(false)
-                  }}
-                  onClose={() => {
-                    setOpen(false)
-                    return annotationPopover.send({ type: 'close' })
-                  }}
-                />
-              )}
             </Box>
           ))}
+          {open && (
+            <AnnotationDialog
+              annotation={openAnnotation}
+              key={openAnnotation.value._key}
+              onSubmit={({ value }) => {
+                annotationPopover.send({
+                  type: 'edit',
+                  at: openAnnotation.at,
+                  props: value,
+                })
+                setOpen(false)
+              }}
+              onClose={() => {
+                setOpen(false)
+                return annotationPopover.send({ type: 'close' })
+              }}
+            />
+          )}
         </Stack>
       }
       arrow
