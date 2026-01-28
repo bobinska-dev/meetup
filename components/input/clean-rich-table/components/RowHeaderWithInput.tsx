@@ -5,7 +5,7 @@ import { PatchOperations } from '@sanity/types'
 import { Box, Button, Card, Dialog, Flex, Stack, Text, TextInput, Tooltip } from '@sanity/ui'
 import styled from 'styled-components'
 import RowContextMenu from './RowContextMenu'
-import { TextIcon } from '@sanity/icons'
+import { TextIcon, WarningOutlineIcon } from '@sanity/icons'
 
 interface RowHeaderWithInputProps {
   row: RichTableRowType
@@ -43,17 +43,28 @@ const RowHeaderWithInput: ComponentType<RowHeaderWithInputProps> = ({
 
   return (
     <Flex direction={'row'} gap={2} justify={'center'} align={'center'}>
-      {row.title && (
-        <Tooltip
-          content={
-            <Box>
-              <Text size={0}>{row.title}</Text>
-            </Box>
-          }
-        >
-          <Button icon={TextIcon} mode={'bleed'} padding={1} onClick={handleOpen} fontSize={0} />
-        </Tooltip>
-      )}
+      <Tooltip
+        content={
+          <Box padding={2}>
+            {row.title && <Text size={1}>Row title: {row.title}</Text>}
+            {!row.title && (
+              <Text size={1} muted>
+                <WarningOutlineIcon style={{ paddingRight: '0.5rem' }} /> Add row title
+              </Text>
+            )}
+          </Box>
+        }
+      >
+        <Button
+          icon={TextIcon}
+          mode={'bleed'}
+          padding={1}
+          onClick={handleOpen}
+          fontSize={0}
+          muted={!row.title}
+        />
+      </Tooltip>
+
       <RowContextMenu
         row={row}
         patch={patch}
@@ -87,7 +98,7 @@ const RowHeaderWithInput: ComponentType<RowHeaderWithInputProps> = ({
               placeholder={'Enter short row title'}
             />
             <Flex justify={'flex-end'}>
-              <Button text={'Save'} onClick={handleSubmit} />{' '}
+              <Button text={'Save'} onClick={handleSubmit} mode={'ghost'} />
             </Flex>
           </Stack>
         </Dialog>

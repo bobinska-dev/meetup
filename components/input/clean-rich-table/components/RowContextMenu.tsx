@@ -35,7 +35,7 @@ const RowContextMenu: ComponentType<RowContextMenuProps> = ({
       id="row-menu-button"
       menu={
         <Menu>
-          {!row.title && <MenuItem text="Add row title" onClick={handleOpen} />}
+          {<MenuItem text="Edit row title" onClick={handleOpen} />}
           <MenuDivider />
           <MenuItem text="Add row above" disabled />
           <MenuItem text="Add row below" disabled />
