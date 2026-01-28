@@ -1,5 +1,12 @@
 import { ComponentType, Suspense, useCallback, useState } from 'react'
-import { ObjectInputProps, pathToString, useClient, useFormValue } from 'sanity'
+import {
+  getPublishedId,
+  ObjectInputProps,
+  pathToString,
+  useClient,
+  useDocumentOperation,
+  useFormValue,
+} from 'sanity'
 import { RichTableType } from '../rich-table/RichTableInput'
 import LoadingIndicator from '../../LoadingIndicator'
 import { Box, Button, Flex, Stack, Switch, Text, Tooltip } from '@sanity/ui'
@@ -16,7 +23,13 @@ const RichTable: ComponentType<ObjectInputProps<RichTableType> & { isInPortableT
     requestTagPrefix: 'rich-table-input',
   })
   const _id = useFormValue(['_id']) as string
+  const _type = useFormValue(['_type']) as string
+
+  // Document operations -> with optimistic changes
+  const { patch, commit } = useDocumentOperation(getPublishedId(_id), _type)
+
   const pathString = pathToString(props.path)
+
   // * Debug mode
   const [debug, setDebug] = useState(false)
   const handleDebugChange = useCallback(() => setDebug(!debug), [debug])

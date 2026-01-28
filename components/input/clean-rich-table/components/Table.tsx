@@ -78,6 +78,7 @@ const Table: ComponentType<
             {/* HEADER ROW */}
             {columnHeaderMembers.map((colHeaderMember, columnIndex) => {
               const colHeaderItem = colHeaderMember.item.value
+              // TODO: force remount when columnHeader value has changed in dialog but not in inline table input -> this is maybe caused by missing blur event in the input👇
 
               return (
                 <ColumnHeaderWithInput

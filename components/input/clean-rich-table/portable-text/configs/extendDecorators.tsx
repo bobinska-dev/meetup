@@ -1,10 +1,4 @@
-import {
-  bold,
-  createKeyboardShortcut,
-  italic,
-  strikeThrough,
-  underline,
-} from '@portabletext/keyboard-shortcuts'
+import { bold, createKeyboardShortcut, italic, strikeThrough, underline } from '@portabletext/keyboard-shortcuts'
 import type { ExtendDecoratorSchemaType } from '@portabletext/toolbar'
 import { BoldIcon, CodeIcon, ItalicIcon, StrikethroughIcon, UnderlineIcon } from '../icons'
 
@@ -50,6 +44,13 @@ const extendDecorator: ExtendDecoratorSchemaType = (decorator) => {
             ctrl: false,
             meta: true,
             shift: false,
+          },
+          {
+            key: 'C',
+            alt: false,
+            ctrl: false,
+            meta: true,
+            shift: true,
           },
         ],
       }), //code,

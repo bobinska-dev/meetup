@@ -38,6 +38,7 @@ const DecoratorButton: ComponentType<{ decorator: ToolbarDecoratorSchemaType }> 
         padding={2}
         tone={'default'}
         mode={'bleed'}
+        title={decorator.shortcut?.keys.join('+')}
       />
     </Tooltip>
   )

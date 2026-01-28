@@ -36,7 +36,7 @@ const ButtonToolbar: ComponentType = () => {
     extendBlockObject,
     extendInlineObject,
   })
-  const getAnchorRect = () => editor.dom.getSelectionRect(editor.getSnapshot())
+
   // STATES
   const [open, setOpen] = useState(false)
   const handleOpenClick = useCallback(() => {
@@ -76,6 +76,28 @@ const ButtonToolbar: ComponentType = () => {
       document.removeEventListener('click', handleClickOutside)
     }
   }, [open])
+
+  // open popover when keyboard shortcut (cmd+shift+t) is pressed and the PTE is focused
+
+  useEffect(() => {
+    const handleHotkey = (e: KeyboardEvent) => {
+      const target = e.target as Node | null
+      if (
+        e.shiftKey &&
+        e.metaKey &&
+        e.key === 'o' &&
+        triggerRef.current?.parentNode &&
+        target &&
+        triggerRef.current?.parentNode?.contains(target)
+      ) {
+        setOpen((prev) => !prev)
+        e.preventDefault()
+      }
+    }
+    window.addEventListener('keydown', handleHotkey)
+
+    return () => window.removeEventListener('keydown', handleHotkey)
+  }, [])
 
   return (
     <>
@@ -119,6 +141,7 @@ const ButtonToolbar: ComponentType = () => {
           // the concrete ref type keeps TS happy elsewhere.
           ref={triggerRef as unknown as React.Ref<HTMLButtonElement>}
           style={{ display: 'inline-block' }}
+          title="Open text formatting toolbar (⇧⌘O)"
         />
       </Popover>
       {toolbarSchema.annotations && <AnnotationPopover schemaTypes={toolbarSchema.annotations} />}

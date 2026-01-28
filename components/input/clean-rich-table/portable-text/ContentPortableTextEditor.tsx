@@ -19,6 +19,7 @@ import { renderListItem } from './configs/renderer/renderListItem'
 import { renderAnnotation } from './configs/renderer/renderAnnotation'
 import { LinkPlugin } from './components/LinkPlugin'
 import ButtonToolbar from './components/context-menu-toolbar/ButtonToolbar'
+import { EmojiPickerPlugin } from './emoji-picker/EmojiPicker'
 
 // import { useFullscreenPTE } from './hooks/useFullScreenPTE'
 
@@ -92,7 +93,7 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
           <CustomListenerPlugin _id={_id} _type={_type} path={props.path} />
           <SlashCommandPickerPlugin />
           <LinkPlugin />
-          {/*<CustomToolbar focus={focus} />*/}
+          <EmojiPickerPlugin />
           <ButtonToolbar />
 
           <StyledPortableTextEditable

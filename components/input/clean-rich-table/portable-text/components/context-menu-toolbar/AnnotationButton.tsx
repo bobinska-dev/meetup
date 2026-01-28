@@ -37,6 +37,7 @@ const AnnotationButton: ComponentType<{ annotation: ToolbarAnnotationSchemaType 
       icon={annotation.icon}
       padding={2}
       mode={'bleed'}
+      title={annotation.shortcut?.keys.join('+')}
     />
   )
 }
