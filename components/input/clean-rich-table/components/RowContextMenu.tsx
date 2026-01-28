@@ -1,36 +1,49 @@
 import { ComponentType } from 'react'
 import { Button, Menu, MenuButton, MenuDivider, MenuItem } from '@sanity/ui'
 import { EllipsisVerticalIcon } from '@sanity/icons'
-import { SanityClient } from 'sanity'
+import { OperationsAPI } from 'sanity'
+import { RichTableRowType } from '../../../../schemaTypes/rich-table/row.object'
 
 interface RowContextMenuProps {
   rowIndex: number
-  rowKey: string
-  client: SanityClient
-  _id: string
+  row: RichTableRowType
+  /** Patch function from Sanity document operations for optimistic changes */
+  patch: OperationsAPI['patch']
   path: string
+  handleOpen?: () => void
 }
 
 /** # Menu button for each row in the table
  *
  * Menu items for adding, moving, and deleting rows.
  *
- * Currently, the move row functionality is disabled.
+ * @param rowIndex - Index of the row
+ * @param row - {@link RichTableRowType} The row object
+ * @param patch - {@link OperationsAPI.patch} function from Sanity document operations for optimistic changes
+ * @param path - {@link Path} to the row in the Sanity document
  */
-const RowContextMenu: ComponentType<RowContextMenuProps> = (props) => {
+const RowContextMenu: ComponentType<RowContextMenuProps> = ({
+  row,
+  rowIndex,
+  patch,
+  path,
+  handleOpen,
+}) => {
   return (
     <MenuButton
-      button={<Button icon={EllipsisVerticalIcon} mode={'bleed'} />}
+      button={<Button icon={EllipsisVerticalIcon} mode={'bleed'} padding={1} />}
       id="row-menu-button"
       menu={
         <Menu>
-          <MenuItem text="Add row above" />
-          <MenuItem text="Add row below" />
+          {!row.title && <MenuItem text="Add row title" onClick={handleOpen} />}
           <MenuDivider />
-          <MenuItem text="Move row ↑" disabled onClick={() => console.log('moved')} />
-          <MenuItem text="Move row ↓" disabled onClick={() => console.log('moved')} />
+          <MenuItem text="Add row above" disabled />
+          <MenuItem text="Add row below" disabled />
           <MenuDivider />
-          <MenuItem text="Delete row" />
+          <MenuItem text="Move row ↑" onClick={() => console.log('moved')} disabled />
+          <MenuItem text="Move row ↓" onClick={() => console.log('moved')} disabled />
+          <MenuDivider />
+          <MenuItem text="Delete row" disabled />
         </Menu>
       }
       popover={{ placement: 'right', portal: true }}

@@ -7,8 +7,8 @@ import {
   ObjectFormNode,
   ObjectInputProps,
   ObjectItem,
+  OperationsAPI,
   pathToString,
-  SanityClient,
 } from 'sanity'
 import { RichTableType } from '../../rich-table/RichTableInput'
 import { Card } from '@sanity/ui'
@@ -20,16 +20,17 @@ import { RichTableCellType } from '../../../../schemaTypes/rich-table/cell.objec
 import ColumnHeaderWithInput from './ColumnHeaderWithInput'
 import { RichTableRowType } from '../../../../schemaTypes/rich-table/row.object'
 import ContentPortableTextInput from '../portable-text/ContentPortableTextEditor'
-import RowContextMenu from './RowContextMenu'
+import RowHeaderWithInput from './RowHeaderWithInput'
 
 const Table: ComponentType<
   ObjectInputProps<RichTableType> & {
     _id: string
     handleOpen?: () => void
     isInDialog?: boolean
-    client: SanityClient
+    /** Patch function from Sanity document operations for optimistic changes */
+    patch: OperationsAPI['patch']
   }
-> = ({ isInDialog = false, client, _id, handleOpen, value, onChange, ...props }) => {
+> = ({ isInDialog = false, _id, handleOpen, value, onChange, patch, ...props }) => {
   // * Prepare path
   const path = pathToString(props.path)
   // * Prepare members
@@ -64,7 +65,7 @@ const Table: ComponentType<
 
   return (
     <Card padding={2} border radius={2}>
-      <TableButtons path={path} client={client} value={value!} _id={_id}>
+      <TableButtons path={path} value={value!} _id={_id} patch={patch}>
         <TableScrollWrapper>
           <TableGrid
             $rowCount={value?.rows?.length || 0}
@@ -76,19 +77,21 @@ const Table: ComponentType<
             <div className={'placeholder-cell'} />
 
             {/* HEADER ROW */}
-            {columnHeaderMembers.map((colHeaderMember, columnIndex) => {
+            {columnHeaderMembers?.map((colHeaderMember, columnIndex) => {
               const colHeaderItem = colHeaderMember.item.value
               // TODO: force remount when columnHeader value has changed in dialog but not in inline table input -> this is maybe caused by missing blur event in the input👇
-
+              // TODO: Add option to hide column headers and row titles
               return (
                 <ColumnHeaderWithInput
                   columnHeader={colHeaderItem}
                   _id={_id}
-                  client={client}
+                  patch={patch}
+                  value={value!}
                   path={path}
                   key={colHeaderItem._key}
                   columnIndex={columnIndex}
                   rowCount={value?.rows?.length || 0}
+                  columnCount={value?.columnHeaders?.length || 0}
                 />
               )
             })}
@@ -105,12 +108,11 @@ const Table: ComponentType<
                   <Fragment key={cellItem.id}>
                     {/* CONTEXT MENU BUTTON */}
                     {cellIndex === 0 && (
-                      <RowContextMenu
+                      <RowHeaderWithInput
+                        row={rowMember.item.value}
+                        patch={patch}
                         rowIndex={rowIndex}
                         path={path}
-                        _id={_id}
-                        client={client}
-                        rowKey={rowKey}
                       />
                     )}
                     {/* PTE CELL CONTENT */}

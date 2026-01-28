@@ -1,12 +1,14 @@
 import { RichTableType } from '../../rich-table/RichTableInput'
-import { PortableTextBlock, SanityClient } from 'sanity'
+import { OperationsAPI, PortableTextBlock } from 'sanity'
+import { PatchOperations } from '@sanity/types'
 import { useCallback } from 'react'
 import { RichTableCellType } from '../../../../schemaTypes/rich-table/cell.object'
 import { ColumnHeader } from '../../../../schemaTypes/rich-table/columnHeader.object'
+import { generateKey } from '../utils/generateKey'
 
 interface UseAddColumnParams {
-  /** Sanity client instance for performing patches/transactions. */
-  client: SanityClient
+  /** Patch function from Sanity document operations for optimistic changes */
+  patch: OperationsAPI['patch']
   /** Document ID in the Sanity dataset. */
   _id: string
   /** Path to the rich table inside the document. */
@@ -15,50 +17,44 @@ interface UseAddColumnParams {
   value: RichTableType
 }
 
-/** # Custom hook returning a callback that appends a new column to a rich table.
- *
- * @param client - Sanity client instance for performing patches/transactions.
- * @param _id - Document ID in the Sanity dataset.
- * @param path - Path string to the rich table inside the document.
- * @param value - Current value of the rich table object.
- */
-export default function useAddColumn({ client, _id, path, value }: UseAddColumnParams) {
+export function useAddColumn({ _id, path, value, patch }: UseAddColumnParams) {
   return useCallback(async () => {
     const colCount = value?.columnHeaders?.length || 0
-    const rowCount = value?.rows?.length || 0
 
     // Template for a new empty cell (no _key; Sanity will generate it)
-    const newCellItem: Omit<RichTableCellType, '_key'> = {
+    const newCellItem: RichTableCellType = {
       _type: 'richTableCell',
+      _key: generateKey(),
       content: [
         { _type: 'block', markDefs: [], children: [{ _type: 'span', text: '', marks: [] }] },
       ] as unknown as PortableTextBlock[],
     }
 
     // New column header item (title uses current header count when available)
-    const newColumnHeaderItem: ColumnHeader & { _type: string } = {
+    const newColumnHeaderItem: ColumnHeader & { _key: string; _type: string } = {
       _type: 'columnHeader',
+      _key: generateKey(),
       title: `New column ${colCount ? colCount + 1 : ''}`,
-      cellIndex: colCount ? colCount - 1 : 0,
+      cellIndex: colCount,
     }
 
-    const transaction = client.transaction()
-    // For each existing row, append a new cell
-    value.rows?.forEach((_, rowIndex) => {
-      const rowCellPath = path + `.rows[${rowIndex}].cells`
-      const newCellPatch = client.patch(_id).append(rowCellPath, [newCellItem])
-      // Add the new cell to the transaction
-      transaction.patch(newCellPatch)
-    })
-    // Append the column header
-    const headerPath = path + `.columnHeaders`
-    const addColumnToHeadersPatch = client.patch(_id).append(headerPath, [newColumnHeaderItem])
-
-    transaction.patch(addColumnToHeadersPatch)
-
-    return await transaction
-      .commit({ autoGenerateArrayKeys: true })
-      .then((res) => console.info('Column successfully added', res))
-      .catch((err) => console.error(err))
+    // Patches based on `patch` function
+    const rowPatchEvents: PatchOperations[] =
+      value.rows?.map((_, rowIndex) => {
+        const rowCellPath = path + `.rows[${rowIndex}].cells[-1]`
+        return {
+          insert: {
+            after: rowCellPath,
+            items: [newCellItem],
+          },
+        } as PatchOperations
+      }) ?? []
+    const headerPatchEvent: PatchOperations = {
+      insert: {
+        after: path + `.columnHeaders[-1]`,
+        items: [newColumnHeaderItem],
+      },
+    }
+    patch.execute([...rowPatchEvents, headerPatchEvent])
   }, [_id, path, value])
 }

@@ -1,15 +1,16 @@
-import { SanityClient } from 'sanity'
+import { OperationsAPI } from 'sanity'
 import { RichTableType } from '../../rich-table/RichTableInput'
 import { ComponentType } from 'react'
 import { Box, Button, Flex, Stack, Text, Tooltip } from '@sanity/ui'
 import { AddIcon } from '@sanity/icons'
-import useAddColumn from '../hooks/useAddColumn'
+import { useAddColumn } from '../hooks/useAddColumn'
 import useAddRow from '../hooks/useAddRow'
 
 interface TableButtonsProps {
   path: string
   children: React.ReactNode
-  client: SanityClient
+  /** Patch function from Sanity document operations for optimistic changes */
+  patch: OperationsAPI['patch']
   value: RichTableType
   _id: string
 }
@@ -18,7 +19,7 @@ interface TableButtonsProps {
  *  Adds a button to add columns and rows to the table.
  */
 const TableButtons: ComponentType<TableButtonsProps> = (props) => {
-  const { client, value, _id, path } = props
+  const { value, _id, path, patch } = props
 
   return (
     <Stack space={4}>
@@ -37,10 +38,10 @@ const TableButtons: ComponentType<TableButtonsProps> = (props) => {
             // text={'Add column'}
             icon={AddIcon}
             onClick={useAddColumn({
-              client,
               _id,
               path,
               value,
+              patch,
             })}
             mode={'ghost'}
           />
@@ -58,10 +59,10 @@ const TableButtons: ComponentType<TableButtonsProps> = (props) => {
           // text={'Add row'}
           icon={AddIcon}
           onClick={useAddRow({
-            client,
             _id,
             path,
             value,
+            patch,
           })}
           mode={'ghost'}
         />

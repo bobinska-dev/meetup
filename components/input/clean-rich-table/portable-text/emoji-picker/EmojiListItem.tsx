@@ -27,8 +27,7 @@ const EmojiListItem: ComponentType<EmojiListItemProps> = (props) => {
       selected={selected}
       mode={'bleed'}
       text={props.match.emoji}
-      //title={props.match.keyword}
-      // text={props.match.label}
+      title={props.match.keyword}
     />
   )
 }

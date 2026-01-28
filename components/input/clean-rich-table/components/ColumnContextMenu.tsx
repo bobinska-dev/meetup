@@ -1,81 +1,242 @@
 import { ComponentType, useCallback } from 'react'
 import { Button, Menu, MenuButton, MenuDivider, MenuItem } from '@sanity/ui'
 import { EllipsisVerticalIcon } from '@sanity/icons'
-import { PortableTextBlock, SanityClient } from 'sanity'
+import { ObjectItem, OperationsAPI, PortableTextBlock } from 'sanity'
 import { RichTableCellType } from '../../../../schemaTypes/rich-table/cell.object'
+import { generateKey } from '../utils/generateKey'
+import { PatchOperations } from '@sanity/types'
+import { ColumnHeader } from '../../../../schemaTypes/rich-table/columnHeader.object'
+import { RichTableType } from '../../rich-table/RichTableInput'
 
 interface ColumnMenuButtonProps {
   columnIndex: number
   columnHeaderKey: string
-  client: SanityClient
-  _id: string
+  /** Patch function from Sanity document operations for optimistic changes */
+  patch: OperationsAPI['patch']
+  value: RichTableType
   path: string
   rowCount: number
+  columnCount: number
 }
 const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
-  const { client, _id, columnIndex, columnHeaderKey, path, rowCount } = props
+  const { patch, columnIndex, columnHeaderKey, path, rowCount, columnCount, value } = props
   const columnHeaderPathString = `${path}.columnHeaders[_key=="${columnHeaderKey}"]`
 
-  // Template cell item
-  const newCellItem: Omit<RichTableCellType, '_key'> = {
-    _type: 'richTableCell',
-    content: [
-      { _type: 'block', markDefs: [], children: [{ _type: 'span', text: '', marks: [] }] },
-    ] as unknown as PortableTextBlock[],
-  }
-
   const handleDeleteColumn = useCallback(async () => {
-    const headerUnsetPatch = client.patch(_id).unset([columnHeaderPathString])
+    const headerUnsetPatch: PatchOperations = {
+      unset: [columnHeaderPathString],
+    }
     const cellPathsToUnset = Array.from({ length: rowCount || 0 }, (_, i) => i).map(
       (rowIndex) => `${path}.rows[${rowIndex}].cells[${columnIndex}]`,
     )
-    const cellUnsetPatches = client.patch(_id).unset(cellPathsToUnset)
+    const cellUnsetPatches: PatchOperations = {
+      unset: cellPathsToUnset,
+    } /*client.patch(_id).unset(cellPathsToUnset)*/
 
-    return await client
-      .transaction()
-      .patch(headerUnsetPatch)
-      .patch(cellUnsetPatches)
-      .commit()
-      .then((res) => console.log(res))
-      .catch((error) => console.error)
-  }, [])
+    return patch.execute([headerUnsetPatch, cellUnsetPatches])
+  }, [columnCount, rowCount, columnIndex, path, columnHeaderKey])
 
-  const handleAddColumn = useCallback(async (side: 'left' | 'right') => {
-    const newColumnHeader = { title: 'New Column', columnIndex: columnIndex }
-    const transaction = client.transaction()
-    const addHeaderPatch =
-      side === 'right'
-        ? client.patch(_id).insert('after', columnHeaderPathString, [newColumnHeader])
-        : client.patch(_id).insert('before', columnHeaderPathString, [newColumnHeader])
+  const handleAddColumn = useCallback(
+    async (side: 'left' | 'right') => {
+      const newColumnIndex = side === 'right' ? columnIndex + 1 : columnIndex
+      const newColumnHeader: ColumnHeader & ObjectItem = {
+        _type: 'columnHeader',
+        title: 'New Column',
+        cellIndex: newColumnIndex,
+        _key: generateKey(),
+      }
 
-    const cellPathsToAdd = Array.from({ length: rowCount || 0 }, (_, i) => i).map((rowIndex) => {
-      return `${path}.rows[${rowIndex}].cells[${columnIndex}]`
-    })
+      // * Patch to add new column header
+      const addHeaderPatch: PatchOperations =
+        side === 'right'
+          ? {
+              insert: {
+                after: columnHeaderPathString,
+                items: [newColumnHeader],
+              },
+            }
+          : {
+              insert: {
+                before: columnHeaderPathString,
+                items: [newColumnHeader],
+              },
+            }
 
-    const addCellPatches = cellPathsToAdd.map((cellPath) => {
-      const direction = side === 'right' ? 'after' : 'before'
+      const newCellsPaths = Array.from({ length: rowCount || 0 }, (_, i) => i).map((rowIndex) => {
+        // Path to insert the new cell > before and after in patch will handle the rest
+        return `${path}.rows[${rowIndex}].cells[${columnIndex}]`
+      })
 
-      return client.patch(_id).insert(direction, cellPath, [newCellItem])
-    })
+      // * Patches to add new cells in each row
+      const addCellPatches = newCellsPaths.map((cellPath) => {
+        const direction = side === 'right' ? 'after' : 'before'
+        // Template cell item
+        const newCellItemWithKey: RichTableCellType = {
+          _type: 'richTableCell',
+          _key: generateKey(),
+          content: [
+            {
+              _type: 'block',
+              _key: generateKey(),
+              markDefs: [],
+              children: [{ _type: 'span', text: '', marks: [] }],
+            },
+          ] as unknown as PortableTextBlock[],
+        }
+        return {
+          insert: {
+            [direction]: cellPath,
+            items: [newCellItemWithKey],
+          },
+        }
+      })
 
-    transaction.patch(addHeaderPatch)
-    addCellPatches.forEach((patch) => transaction.patch(patch))
+      // Patches to increase cellIndex of subsequent columns
+      const columnHeaderIndexesToUpdate =
+        side === 'right'
+          ? // if col has been added after, we need to update all columns with index greater than the current one
+            Array.from({ length: columnCount - (columnIndex + 1) }, (_, i) => i + columnIndex + 1)
+          : // if col has been added before, we need to update all columns with index greater than or equal to the current one
+            Array.from({ length: columnCount - columnIndex }, (_, i) => i + columnIndex)
 
-    return await transaction
-      .commit({ autoGenerateArrayKeys: true })
-      .then((res) => console.log(res))
-      .catch((error) => console.error)
-  }, [])
+      const cellIndexPatches = columnHeaderIndexesToUpdate.map((colHeaderIndex) => {
+        const colHeaderPath = `${path}.columnHeaders[${colHeaderIndex}]`
+        return {
+          inc: {
+            [`${colHeaderPath}.cellIndex`]: 1,
+          },
+        }
+      })
+      // first we move the cellIndexes of the existing columns to make space for the new column
+      patch.execute(cellIndexPatches)
 
-  // TODO: finish move column implementation
-  const handleMoveColumn = useCallback(async (direction: 'left' | 'right') => {
-    const transaction = client.transaction()
-    // TODO implement move column
-    /* first the column header, then each cell in each row  have to be stored somewhere as items to be re-inserted at the new position
-     * then the old items have to be unset
-     * Finally, the stored items have to be inserted at the new position
-     */
-  }, [])
+      // then we add the new column header and the new cells
+      return patch.execute([addHeaderPatch, ...addCellPatches])
+    },
+    [columnCount, rowCount, columnIndex, path, columnHeaderKey],
+  )
+
+  const handleMoveColumn = useCallback(
+    async (direction: 'left' | 'right') => {
+      // First we store the current column header and cells (with their values) to temporary variables
+      const headerToMove = value.columnHeaders?.[columnIndex]
+      const headerToPatch = {
+        ...headerToMove,
+        cellIndex: direction === 'left' ? columnIndex - 1 : columnIndex + 1,
+      }
+      const cellsToMove = value.rows?.map((row) => ({
+        rowKey: row._key,
+        cell: row.cells?.[columnIndex],
+      }))
+
+      if (direction === 'left') {
+        // * Calculate new column index
+        const newColumnIndex = columnIndex - 1
+
+        // * Prepare unset patches
+        const headerPathToUnset = `${path}.columnHeaders[${columnIndex}]`
+        const cellPathsToUnset = cellsToMove?.map(
+          (row) => `${path}.rows[_key=="${row.rowKey}"].cells[${columnIndex}]`,
+        )
+
+        const unsetPatches: PatchOperations[] = [
+          {
+            unset: [...(cellPathsToUnset || []), headerPathToUnset],
+          },
+        ]
+
+        // * Prepare inc patches for other columns
+        const columnHeaderIndexesToUpdate = Array.from({ length: columnCount }, (_, i) => i).filter(
+          (i) => i < columnIndex,
+        )
+
+        const incPatches: PatchOperations[] = columnHeaderIndexesToUpdate.map((colHeaderIndex) => {
+          const colHeaderPath = `${path}.columnHeaders[${colHeaderIndex}]`
+          return {
+            inc: {
+              [`${colHeaderPath}.cellIndex`]: 1,
+            },
+          }
+        })
+
+        // * Prepare insert patches
+        const headerInsertPatch: PatchOperations = {
+          insert: {
+            before: `${path}.columnHeaders[${newColumnIndex}]`,
+            items: [headerToPatch!],
+          },
+        }
+
+        const cellInsertPatches: PatchOperations[] =
+          cellsToMove?.map((row) => ({
+            insert: {
+              before: `${path}.rows[_key=="${row.rowKey}"].cells[${newColumnIndex}]`,
+              items: [row.cell!],
+            },
+          })) || []
+
+        // * Execute all patches in order
+        return patch.execute([
+          ...unsetPatches,
+          ...incPatches,
+          headerInsertPatch,
+          ...cellInsertPatches,
+        ])
+      }
+      if (direction === 'right') {
+        // * Prepare unset patches
+        const headerPathToUnset = `${path}.columnHeaders[${columnIndex}]`
+        const cellPathsToUnset = cellsToMove?.map(
+          (row) => `${path}.rows[_key=="${row.rowKey}"].cells[${columnIndex}]`,
+        )
+
+        const unsetPatches: PatchOperations[] = [
+          {
+            unset: [...(cellPathsToUnset || []), headerPathToUnset],
+          },
+        ]
+
+        // * Prepare dec patches for other columns
+        const columnHeaderIndexesToUpdate = Array.from({ length: columnCount }, (_, i) => i).filter(
+          (i) => i > columnIndex,
+        )
+        const decPatches: PatchOperations[] = columnHeaderIndexesToUpdate.map((colHeaderIndex) => {
+          const colHeaderPath = `${path}.columnHeaders[${colHeaderIndex - 1}]`
+          return {
+            dec: {
+              [`${colHeaderPath}.cellIndex`]: 1,
+            },
+          }
+        })
+
+        // * Prepare insert patches
+        const headerInsertPatch: PatchOperations = {
+          insert: {
+            after: `${path}.columnHeaders[${columnIndex}]`,
+            items: [headerToPatch!],
+          },
+        }
+
+        const cellInsertPatches: PatchOperations[] =
+          cellsToMove?.map((row) => ({
+            insert: {
+              after: `${path}.rows[_key=="${row.rowKey}"].cells[${columnIndex}]`,
+              items: [row.cell!],
+            },
+          })) || []
+
+        // * Execute all patches in order
+        return patch.execute([
+          ...unsetPatches,
+          ...decPatches,
+          headerInsertPatch,
+          ...cellInsertPatches,
+        ])
+      }
+      return console.warn('Something went wrong, please check `handleMoveColumn` implementation')
+    },
+    [columnCount, rowCount, columnIndex, path, columnHeaderKey, value],
+  )
 
   return (
     <MenuButton
@@ -86,8 +247,8 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
           <MenuItem text="Add column to the left" onClick={() => handleAddColumn('left')} />
           <MenuItem text="Add column to the right" onClick={() => handleAddColumn('right')} />
           <MenuDivider />
-          <MenuItem text="Move column <-" disabled onClick={() => console.log('moved')} />
-          <MenuItem text="Move column ->" disabled onClick={() => console.log('moved')} />
+          <MenuItem text="Move column <-" onClick={() => handleMoveColumn('left')} />
+          <MenuItem text="Move column ->" onClick={() => handleMoveColumn('right')} />
           <MenuDivider />
           <MenuItem text="Delete column" onClick={handleDeleteColumn} />
         </Menu>

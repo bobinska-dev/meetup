@@ -32,7 +32,21 @@ export default defineType({
   ],
   preview: {
     select: {
-      cells: 'cells.content',
+      title: 'title',
+      cells: 'cells',
+    },
+    prepare(selection) {
+      const { title, cells } = selection
+      if (!title) {
+        return {
+          title: 'Row',
+          subtitle: `${cells.length} cell${cells && cells.length === 1 ? '' : 's'}`,
+        }
+      }
+      return {
+        title: title,
+        subtitle: `${cells.length} cell${cells && cells.length === 1 ? '' : 's'}`,
+      }
     },
   },
 })

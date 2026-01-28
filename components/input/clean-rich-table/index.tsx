@@ -26,7 +26,7 @@ const RichTable: ComponentType<ObjectInputProps<RichTableType> & { isInPortableT
   const _type = useFormValue(['_type']) as string
 
   // Document operations -> with optimistic changes
-  const { patch, commit } = useDocumentOperation(getPublishedId(_id), _type)
+  const { patch } = useDocumentOperation(getPublishedId(_id), _type)
 
   const pathString = pathToString(props.path)
 
@@ -75,9 +75,9 @@ const RichTable: ComponentType<ObjectInputProps<RichTableType> & { isInPortableT
               <Table
                 {...props}
                 isInDialog={false}
-                client={client}
                 _id={_id}
                 handleOpen={handleOpen}
+                patch={patch}
                 // We need this key to force remounting the table when opening/closing the dialog
                 key={openDialog ? 'table-in-dialog-open' : 'table-in-dialog-closed'}
               />
@@ -87,7 +87,7 @@ const RichTable: ComponentType<ObjectInputProps<RichTableType> & { isInPortableT
                 {...props}
                 isInDialog={true}
                 handleClose={handleClose}
-                client={client}
+                patch={patch}
                 _id={_id}
               />
             )}

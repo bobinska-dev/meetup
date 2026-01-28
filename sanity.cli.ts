@@ -6,7 +6,8 @@ export default defineCliConfig({
     dataset: 'production',
   },
 
-  deployment: { autoUpdates: true, appId: 'rich-table' },
+  deployment: { autoUpdates: true, appId: 'ht6614qoqyekhpzqpywph959' },
+  studioHost: 'rich-table',
   reactStrictMode: true,
   reactCompiler: { target: '19' },
 })

@@ -1,5 +1,5 @@
 import { ComponentType } from 'react'
-import { ObjectInputProps, SanityClient } from 'sanity'
+import { ObjectInputProps, OperationsAPI } from 'sanity'
 import { RichTableType } from '../../rich-table/RichTableInput'
 import { Dialog, Flex } from '@sanity/ui'
 import Table from './Table'
@@ -9,9 +9,10 @@ const ExpandedTableDialog: ComponentType<
     _id: string
     handleClose?: () => void
     isInDialog?: boolean
-    client: SanityClient
+    /** Patch function from Sanity document operations for optimistic changes */
+    patch: OperationsAPI['patch']
   }
-> = ({ isInDialog = true, client, _id, value, onChange, ...props }) => {
+> = ({ isInDialog = true, patch, _id, value, onChange, ...props }) => {
   return (
     <Dialog
       id={'expanded-table-dialog'}
@@ -23,7 +24,7 @@ const ExpandedTableDialog: ComponentType<
         <Table
           {...props}
           isInDialog={true}
-          client={client}
+          patch={patch}
           _id={_id}
           value={value}
           onChange={onChange}

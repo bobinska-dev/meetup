@@ -1,27 +1,35 @@
 import { ColumnHeader } from '../../../../schemaTypes/rich-table/columnHeader.object'
-import { ObjectItem, SanityClient } from 'sanity'
+import { ObjectItem, OperationsAPI } from 'sanity'
 import { ChangeEvent, ComponentType, useCallback, useState } from 'react'
 import { Card, TextInput } from '@sanity/ui'
 
 import styled from 'styled-components'
 import ColumnContextMenu from './ColumnContextMenu'
+import { PatchOperations } from '@sanity/types'
+import { RichTableType } from '../../rich-table/RichTableInput'
 
 interface ColumnHeaderWithInputProps {
   columnHeader: ColumnHeader & ObjectItem
   _id: string
-  client: SanityClient
+  /** Patch function from Sanity document operations for optimistic changes */
+  patch: OperationsAPI['patch']
+  value: RichTableType
   path: string
   columnIndex: number
   rowCount: number
+  columnCount: number
 }
 
 export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = ({
   columnHeader,
-  client,
+
+  patch,
   _id,
   path,
   columnIndex,
   rowCount,
+  columnCount,
+  value,
 }) => {
   const [title, setTitle] = useState(columnHeader.title || '')
   const [isFocused, setIsFocused] = useState(false)
@@ -33,14 +41,12 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
 
   const handleBlur = useCallback(async () => {
     setIsFocused(false)
-    return await client
-      .patch(_id)
-      .set({
+    const setPatch: PatchOperations = {
+      set: {
         [`${path}.columnHeaders[_key=="${columnHeader._key}"].title`]: title,
-      })
-      .commit()
-      .then((res) => console.log(res))
-      .catch(console.error)
+      },
+    }
+    patch.execute([setPatch])
   }, [title, _id, columnHeader._key])
   // TODO ADD KEY WITH OPEN DIALOG TO FORCE REMOUNT
   return (
@@ -60,12 +66,13 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
         style={{ textAlign: 'center' }}
         suffix={
           <ColumnContextMenu
-            _id={_id}
-            client={client}
+            patch={patch}
             path={path}
+            value={value}
             columnHeaderKey={columnHeader._key}
             columnIndex={columnIndex}
             rowCount={rowCount}
+            columnCount={columnCount}
           />
         }
       />
