@@ -28,13 +28,12 @@ import TableScrollWrapper from './TableScrollWrapper'
 
 const Table: ComponentType<
   ObjectInputProps<RichTableType> & {
-    _id: string
     handleOpen?: () => void
     isInDialog?: boolean
     /** Patch function from Sanity document operations for optimistic changes */
     patch: OperationsAPI['patch']
   }
-> = ({ isInDialog = false, _id, handleOpen, value, onChange, patch, ...props }) => {
+> = ({ isInDialog = false, handleOpen, value, onChange, patch, ...props }) => {
   // * Prepare the path
   const path = pathToString(props.path)
   // * Prepare members
@@ -74,9 +73,10 @@ const Table: ComponentType<
     patch,
     path,
   )
+  // TODO: add readonly mode handling
   return (
     <Card padding={3} border radius={2}>
-      <TableButtons path={path} value={value!} _id={_id} patch={patch}>
+      <TableButtons path={path} value={value!} patch={patch} readOnly={props.readOnly}>
         <TableScrollWrapper>
           <TableGrid
             $rowCount={value?.rows?.length || 0}
@@ -91,7 +91,6 @@ const Table: ComponentType<
             {columnHeaderMembers?.map((colHeaderMember, columnIndex) => {
               const colHeaderItem = colHeaderMember.item.value
               // TODO: force remount when columnHeader value has changed in dialog but not in inline table input -> this is maybe caused by missing blur event in the input👇
-              // TODO: Add option to hide column headers and row titles
               return (
                 <Fragment key={colHeaderItem._key}>
                   {hasColumnTitles && (
@@ -104,6 +103,7 @@ const Table: ComponentType<
                       columnIndex={columnIndex}
                       rowCount={value?.rows?.length || 0}
                       columnCount={value?.columnHeaders?.length || 0}
+                      readOnly={props.readOnly}
                     />
                   )}
                   {!hasColumnTitles && (
@@ -117,6 +117,7 @@ const Table: ComponentType<
                       rowCount={value?.rows?.length || 0}
                       columnCount={value?.columnHeaders?.length || 0}
                       iconHorizontal
+                      readOnly={props.readOnly}
                     />
                   )}
                 </Fragment>
@@ -140,6 +141,7 @@ const Table: ComponentType<
                         rowIndex={rowIndex}
                         rowCount={value?.rows?.length || 0}
                         path={path}
+                        readOnly={props.readOnly}
                       />
                     )}
                     {cellIndex === 0 && !hasRowTitles && (
@@ -149,6 +151,7 @@ const Table: ComponentType<
                         row={rowMember.item.value}
                         patch={patch}
                         path={path}
+                        readOnly={props.readOnly}
                       />
                     )}
                     {/* PTE CELL CONTENT */}
@@ -157,6 +160,7 @@ const Table: ComponentType<
                       path={cellPTEPath}
                       value={cellValue}
                       key={cellItem.id}
+                      readOnly={props.readOnly}
                     />
                   </Fragment>
                 )

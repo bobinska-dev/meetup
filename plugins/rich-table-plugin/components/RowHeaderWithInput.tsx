@@ -12,6 +12,7 @@ interface RowHeaderWithInputProps {
   patch: OperationsAPI['patch']
   rowIndex: number
   rowCount: number
+  readOnly: boolean | undefined
   path: string
 }
 
@@ -22,6 +23,7 @@ const RowHeaderWithInput: ComponentType<RowHeaderWithInputProps> = ({
   path,
   rowIndex,
   rowCount,
+  readOnly,
 }) => {
   const [title, setTitle] = useState(row.title || '')
   const [isFocused, setIsFocused] = useState(false)
@@ -66,13 +68,21 @@ const RowHeaderWithInput: ComponentType<RowHeaderWithInputProps> = ({
             textOverflow: 'ellipsis',
             color: 'var(--card-muted-fg-color)',
           }}
+          disabled={readOnly}
           title={title}
           padding={0}
           placeholder={newRowTitle}
         />
       </StyledCard>
 
-      <RowContextMenu row={row} patch={patch} path={path} rowIndex={rowIndex} rowCount={rowCount} />
+      <RowContextMenu
+        row={row}
+        patch={patch}
+        path={path}
+        rowIndex={rowIndex}
+        rowCount={rowCount}
+        readOnly={readOnly}
+      />
     </Flex>
   )
 }

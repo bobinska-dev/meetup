@@ -20,6 +20,7 @@ interface InitialiseTableProps {
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']
   isInPortableText?: boolean
+  readOnly: boolean | undefined
 }
 
 const CELL_SIZE = 28
@@ -35,6 +36,7 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   path,
   patch,
   isInPortableText,
+  readOnly,
 }) => {
   // * STATES
   const [selected, setSelected] = useState<TableSize>({
@@ -106,7 +108,7 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
         },
       ])
     },
-    [selected, path, patch, isInPortableText],
+    [path, patch, isInPortableText],
   )
   // * COMMIT SELECTION
   const effectiveRows = selected.rows || hover.rows
@@ -120,6 +122,7 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
       tabIndex={0}
       onMouseLeave={() => setHover({ rows: 0, cols: 0 })}
       onKeyDown={(e) =>
+        !readOnly &&
         onKeyDownSelectCells({
           e,
           selected,
@@ -167,6 +170,7 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
                     height: CELL_SIZE,
                     boxSizing: 'border-box',
                   }}
+                  disabled={readOnly}
                 />
               )
             }),
@@ -188,6 +192,7 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
           fontSize={0}
           muted
           text={'Clear'}
+          disabled={readOnly}
         />
       </Flex>
     </Card>

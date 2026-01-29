@@ -7,13 +7,12 @@ import { RichTableType } from '../schemas/richTable.object'
 
 const ExpandedTableDialog: ComponentType<
   ObjectInputProps<RichTableType> & {
-    _id: string
     handleClose?: () => void
     isInDialog?: boolean
     /** Patch function from Sanity document operations for optimistic changes */
     patch: OperationsAPI['patch']
   }
-> = ({ isInDialog = true, patch, _id, value, onChange, ...props }) => {
+> = ({ isInDialog = true, patch, value, onChange, ...props }) => {
   return (
     <Dialog
       id={'expanded-table-dialog'}
@@ -22,14 +21,7 @@ const ExpandedTableDialog: ComponentType<
       onClose={props.handleClose}
     >
       <Flex padding={3} justify={'center'}>
-        <Table
-          {...props}
-          isInDialog={true}
-          patch={patch}
-          _id={_id}
-          value={value}
-          onChange={onChange}
-        />
+        <Table {...props} isInDialog={true} patch={patch} value={value} onChange={onChange} />
       </Flex>
     </Dialog>
   )

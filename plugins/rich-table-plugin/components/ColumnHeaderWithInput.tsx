@@ -19,6 +19,7 @@ interface ColumnHeaderWithInputProps {
   columnIndex: number
   rowCount: number
   columnCount: number
+  readOnly: boolean | undefined
 }
 
 export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = ({
@@ -29,6 +30,7 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
   rowCount,
   columnCount,
   value,
+  readOnly,
 }) => {
   const [title, setTitle] = useState(columnHeader.title || '')
   const [isFocused, setIsFocused] = useState(false)
@@ -71,6 +73,7 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
         title={title}
         padding={0}
         placeholder={newColumnTitle}
+        disabled={readOnly}
         suffix={
           <ColumnContextMenu
             patch={patch}
@@ -80,6 +83,7 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
             columnIndex={columnIndex}
             rowCount={rowCount}
             columnCount={columnCount}
+            readOnly={readOnly}
           />
         }
       />

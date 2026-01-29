@@ -77,7 +77,7 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
           <SlashCommandPickerPlugin />
           <LinkPlugin />
           <EmojiPickerPlugin />
-          <ButtonToolbar />
+          {!props.readOnly && <ButtonToolbar />}
 
           <StyledPortableTextEditable
             renderStyle={renderStyle}

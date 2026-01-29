@@ -1,6 +1,6 @@
 import { AddIcon } from '@sanity/icons'
 import { Box, Button, Flex, Stack, Text, Tooltip } from '@sanity/ui'
-import { ComponentType } from 'react'
+import { ComponentType, ReactNode } from 'react'
 import { OperationsAPI } from 'sanity'
 
 import { useAddColumn } from '../hooks/useAddColumn'
@@ -9,19 +9,19 @@ import { RichTableType } from '../schemas/richTable.object'
 
 interface TableButtonsProps {
   path: string
-  children: React.ReactNode
+  children: ReactNode
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']
   value: RichTableType
-  _id: string
+  readOnly: boolean | undefined
 }
 
 /** # Table Buttons Component
  *  Adds a button to add columns and rows to the table.
  */
 const TableButtons: ComponentType<TableButtonsProps> = (props) => {
-  const { value, _id, path, patch } = props
-
+  const { value, path, patch, readOnly } = props
+  if (readOnly) return props.children
   return (
     <Stack space={4}>
       <Flex gap={4}>
@@ -39,12 +39,12 @@ const TableButtons: ComponentType<TableButtonsProps> = (props) => {
             // text={'Add column'}
             icon={AddIcon}
             onClick={useAddColumn({
-              _id,
               path,
               value,
               patch,
             })}
             mode={'ghost'}
+            disabled={readOnly}
           />
         </Tooltip>
       </Flex>
@@ -60,12 +60,12 @@ const TableButtons: ComponentType<TableButtonsProps> = (props) => {
           // text={'Add row'}
           icon={AddIcon}
           onClick={useAddRow({
-            _id,
             path,
             value,
             patch,
           })}
           mode={'ghost'}
+          disabled={readOnly}
         />
       </Tooltip>
     </Stack>

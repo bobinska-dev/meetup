@@ -14,6 +14,7 @@ interface RowContextMenuProps {
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']
   path: string
+  readOnly: boolean | undefined
 }
 
 /** # Menu button for each row in the table
@@ -24,6 +25,8 @@ interface RowContextMenuProps {
  * @param row - {@link RichTableRowType} The row object
  * @param patch - {@link OperationsAPI} patch function from Sanity document operations for optimistic changes
  * @param path - {@link Path} to the row in the Sanity document
+ * @param rowCount - Total number of rows in the table
+ * @param readOnly - Whether the table is in read-only mode
  */
 const RowContextMenu: ComponentType<RowContextMenuProps> = ({
   row,
@@ -31,6 +34,7 @@ const RowContextMenu: ComponentType<RowContextMenuProps> = ({
   patch,
   path,
   rowCount,
+  readOnly,
 }) => {
   // * Handle delete row
   const handleDeleteRow = useCallback(() => {
@@ -122,21 +126,29 @@ const RowContextMenu: ComponentType<RowContextMenuProps> = ({
       id="row-menu-button"
       menu={
         <Menu>
-          <MenuItem text="Add row above" onClick={() => handleAddRow('above')} />
-          <MenuItem text="Add row below" onClick={() => handleAddRow('below')} />
+          <MenuItem
+            text="Add row above"
+            onClick={() => handleAddRow('above')}
+            disabled={readOnly}
+          />
+          <MenuItem
+            text="Add row below"
+            onClick={() => handleAddRow('below')}
+            disabled={readOnly}
+          />
           <MenuDivider />
           <MenuItem
             text="Move row ↑"
             onClick={() => handleMoveRow('up')}
-            disabled={rowIndex === 0}
+            disabled={readOnly || rowIndex === 0}
           />
           <MenuItem
             text="Move row ↓"
             onClick={() => handleMoveRow('down')}
-            disabled={rowIndex - rowCount === -1}
+            disabled={readOnly || rowIndex - rowCount === -1}
           />
           <MenuDivider />
-          <MenuItem text="Delete row" onClick={handleDeleteRow} />
+          <MenuItem text="Delete row" onClick={handleDeleteRow} disabled={readOnly} />
         </Menu>
       }
       popover={{ placement: 'right', portal: true }}

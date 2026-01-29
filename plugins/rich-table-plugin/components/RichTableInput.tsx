@@ -36,7 +36,7 @@ const RichTableInput: ComponentType<
   const handleOpen = useCallback(() => setOpenDialog(true), [])
   const handleClose = useCallback(() => setOpenDialog(false), [])
 
-  const { hasColumnTitles, hasRowTitles } = props.value!
+  const { hasColumnTitles, hasRowTitles } = props.value || {}
   const { toggleColumnTitles, toggleRowTitles } = useToggleTitles(
     hasColumnTitles,
     hasRowTitles,
@@ -52,6 +52,7 @@ const RichTableInput: ComponentType<
             patch={patch}
             path={pathString}
             isInPortableText={props.isInPortableText}
+            readOnly={props.readOnly}
           />
         )}
         {props.value && props.value.rows && (
@@ -72,8 +73,13 @@ const RichTableInput: ComponentType<
                     onClick={handleOpen}
                     mode={'bleed'}
                     fontSize={0}
-                    text={'Expand table'}
+                    text={
+                      props.isInPortableText && !props.readOnly
+                        ? 'Open table to edit'
+                        : 'Expand table'
+                    }
                     muted
+                    disabled={props.readOnly}
                   />
                 </Tooltip>
               </Flex>
@@ -81,11 +87,11 @@ const RichTableInput: ComponentType<
               <Table
                 {...props}
                 isInDialog={false}
-                _id={_id}
                 handleOpen={handleOpen}
                 patch={patch}
                 // We need this key to force remounting the table when opening/closing the dialog
                 key={openDialog ? 'table-in-dialog-open' : 'table-in-dialog-closed'}
+                readOnly={props.isInPortableText ? true : props.readOnly}
               />
             </Box>
             {openDialog && (
@@ -94,7 +100,6 @@ const RichTableInput: ComponentType<
                 isInDialog={true}
                 handleClose={handleClose}
                 patch={patch}
-                _id={_id}
               />
             )}
           </>
@@ -124,6 +129,7 @@ const RichTableInput: ComponentType<
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 toggleRowTitles(e.currentTarget.checked)
               }
+              disabled={props.readOnly}
               label={'Show row titles'}
               id={'row-title-toggle'}
             />
@@ -137,6 +143,7 @@ const RichTableInput: ComponentType<
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 toggleColumnTitles(e.currentTarget.checked)
               }
+              disabled={props.readOnly}
               label={'Show column titles'}
               id={'column-title-toggle'}
             />

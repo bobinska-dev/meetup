@@ -19,6 +19,7 @@ interface ColumnMenuButtonProps {
   rowCount: number
   columnCount: number
   iconHorizontal?: boolean
+  readOnly: boolean | undefined
 }
 const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
   const {
@@ -30,6 +31,7 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
     columnCount,
     value,
     iconHorizontal,
+    readOnly,
   } = props
   const columnHeaderPathString = `${path}.columnHeaders[_key=="${columnHeaderKey}"]`
 
@@ -239,21 +241,29 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
       id="column-menu-button"
       menu={
         <Menu>
-          <MenuItem text="Add column to the left" onClick={() => handleAddColumn('left')} />
-          <MenuItem text="Add column to the right" onClick={() => handleAddColumn('right')} />
+          <MenuItem
+            text="Add column to the left"
+            onClick={() => handleAddColumn('left')}
+            disabled={readOnly}
+          />
+          <MenuItem
+            text="Add column to the right"
+            onClick={() => handleAddColumn('right')}
+            disabled={readOnly}
+          />
           <MenuDivider />
           <MenuItem
             text="Move column <-"
             onClick={() => handleMoveColumn('left')}
-            disabled={columnIndex === 0}
+            disabled={readOnly || columnIndex === 0}
           />
           <MenuItem
             text="Move column ->"
             onClick={() => handleMoveColumn('right')}
-            disabled={columnIndex - columnCount === -1}
+            disabled={readOnly || columnIndex - columnCount === -1}
           />
           <MenuDivider />
-          <MenuItem text="Delete column" onClick={handleDeleteColumn} />
+          <MenuItem text="Delete column" onClick={handleDeleteColumn} disabled={readOnly} />
         </Menu>
       }
       popover={{ placement: 'right', portal: true }}
