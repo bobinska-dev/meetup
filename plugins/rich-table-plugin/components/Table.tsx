@@ -73,7 +73,7 @@ const Table: ComponentType<
     patch,
     path,
   )
-  // TODO: add readonly mode handling
+
   return (
     <Card padding={3} border radius={2}>
       <TableButtons path={path} value={value!} patch={patch} readOnly={props.readOnly}>
@@ -83,6 +83,7 @@ const Table: ComponentType<
             // we need to add one extra column for the row titles / context menu
             $columnCount={value?.columnHeaders?.length ? value?.columnHeaders?.length + 1 : 0}
             $isInDialog={false}
+            $hasRowTitles={hasRowTitles}
           >
             {/* Placeholder for row title column */}
             <div className={'placeholder-cell'} />
