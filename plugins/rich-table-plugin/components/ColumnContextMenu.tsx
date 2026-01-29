@@ -156,18 +156,12 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
         ]
 
         // * Prepare inc patches for other columns
-        const columnHeaderIndexesToUpdate = Array.from({ length: columnCount }, (_, i) => i).filter(
-          (i) => i < columnIndex,
-        )
-
-        const incPatches: PatchOperations[] = columnHeaderIndexesToUpdate.map((colHeaderIndex) => {
-          const colHeaderPath = `${path}.columnHeaders[${colHeaderIndex}]`
-          return {
-            inc: {
-              [`${colHeaderPath}.cellIndex`]: 1,
-            },
-          }
-        })
+        const colHeaderPath = `${path}.columnHeaders[${columnIndex - 1}]`
+        const incPatch: PatchOperations = {
+          inc: {
+            [`${colHeaderPath}.cellIndex`]: 1,
+          },
+        }
 
         // * Prepare insert patches
         const headerInsertPatch: PatchOperations = {
@@ -185,16 +179,10 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
             },
           })) || []
 
-        // * Execute all patches in order
-        return patch.execute([
-          ...unsetPatches,
-          ...incPatches,
-          headerInsertPatch,
-          ...cellInsertPatches,
-        ])
+        // * Execute all patches in order (do not change order!)
+        return patch.execute([...unsetPatches, incPatch, headerInsertPatch, ...cellInsertPatches])
       }
       if (direction === 'right') {
-        // TODO fix cell index issue -> inc and dec is not being applied correctly
         // * Prepare unset patches
         const headerPathToUnset = `${path}.columnHeaders[${columnIndex}]`
         const cellPathsToUnset = cellsToMove?.map(
@@ -209,10 +197,9 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
 
         // * Prepare dec patches for other columns
 
-        const columnHeaderIndexToUpdate = columnIndex + 1
-        const decPatche: PatchOperations = {
+        const decPatch: PatchOperations = {
           dec: {
-            [`${path}.columnHeaders[${columnHeaderIndexToUpdate}].cellIndex`]: 1,
+            [`${path}.columnHeaders[${columnIndex}].cellIndex`]: 1,
           },
         }
 
@@ -233,11 +220,11 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
           })) || []
 
         // * Execute all patches in order
-        return patch.execute([...unsetPatches, decPatche, headerInsertPatch, ...cellInsertPatches])
+        return patch.execute([...unsetPatches, decPatch, headerInsertPatch, ...cellInsertPatches])
       }
       return console.warn('Something went wrong, please check `handleMoveColumn` implementation')
     },
-    [columnCount, columnIndex, path, value, patch],
+    [columnIndex, path, value, patch],
   )
 
   return (
