@@ -1,3 +1,4 @@
+import { Card, Flex, Inline, Switch, Text } from '@sanity/ui'
 import { ChangeEvent, ComponentType, Fragment } from 'react'
 import {
   ArrayOfObjectsFormNode,
@@ -10,20 +11,20 @@ import {
   OperationsAPI,
   pathToString
 } from 'sanity'
+
+import { useToggleTitles } from '../hooks/useToggleTitles'
+import ContentPortableTextInput from '../portable-text/ContentPortableTextEditor'
+import { RichTableCellType } from '../schemas/cell.object'
+import { ColumnHeader } from '../schemas/columnHeader.object'
 import { RichTableType } from '../schemas/richTable.object'
-import { Card, Flex, Inline, Switch, Text } from '@sanity/ui'
+import { RichTableRowType } from '../schemas/row.object'
+import ColumnContextMenu from './ColumnContextMenu'
+import ColumnHeaderWithInput from './ColumnHeaderWithInput'
+import RowContextMenu from './RowContextMenu'
+import RowHeaderWithInput from './RowHeaderWithInput'
 import TableButtons from './TableButtons'
 import TableGrid from './TableGrid'
 import TableScrollWrapper from './TableScrollWrapper'
-import { ColumnHeader } from '../schemas/columnHeader.object'
-import { RichTableCellType } from '../schemas/cell.object'
-import ColumnHeaderWithInput from './ColumnHeaderWithInput'
-import { RichTableRowType } from '../schemas/row.object'
-import ContentPortableTextInput from '../portable-text/ContentPortableTextEditor'
-import RowHeaderWithInput from './RowHeaderWithInput'
-import RowContextMenu from './RowContextMenu'
-import { useToggleTitles } from '../hooks/useToggleTitles'
-import ColumnContextMenu from './ColumnContextMenu'
 
 const Table: ComponentType<
   ObjectInputProps<RichTableType> & {
@@ -34,7 +35,7 @@ const Table: ComponentType<
     patch: OperationsAPI['patch']
   }
 > = ({ isInDialog = false, _id, handleOpen, value, onChange, patch, ...props }) => {
-  // * Prepare path
+  // * Prepare the path
   const path = pathToString(props.path)
   // * Prepare members
   const tableObjectMembers = props.members as FieldMember[]
