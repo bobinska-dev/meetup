@@ -8,7 +8,7 @@ import {
   ObjectInputProps,
   ObjectItem,
   OperationsAPI,
-  pathToString,
+  pathToString
 } from 'sanity'
 import { RichTableType } from '../schemas/richTable.object'
 import { Card, Flex, Inline, Switch, Text } from '@sanity/ui'
@@ -137,12 +137,14 @@ const Table: ComponentType<
                         row={rowMember.item.value}
                         patch={patch}
                         rowIndex={rowIndex}
+                        rowCount={value?.rows?.length || 0}
                         path={path}
                       />
                     )}
                     {cellIndex === 0 && !hasRowTitles && (
                       <RowContextMenu
                         rowIndex={rowIndex}
+                        rowCount={value?.rows?.length || 0}
                         row={rowMember.item.value}
                         patch={patch}
                         path={path}

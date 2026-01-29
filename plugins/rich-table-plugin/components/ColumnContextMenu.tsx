@@ -194,6 +194,7 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
         ])
       }
       if (direction === 'right') {
+        // TODO fix cell index issue -> inc and dec is not being applied correctly
         // * Prepare unset patches
         const headerPathToUnset = `${path}.columnHeaders[${columnIndex}]`
         const cellPathsToUnset = cellsToMove?.map(
@@ -207,17 +208,13 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
         ]
 
         // * Prepare dec patches for other columns
-        const columnHeaderIndexesToUpdate = Array.from({ length: columnCount }, (_, i) => i).filter(
-          (i) => i > columnIndex,
-        )
-        const decPatches: PatchOperations[] = columnHeaderIndexesToUpdate.map((colHeaderIndex) => {
-          const colHeaderPath = `${path}.columnHeaders[${colHeaderIndex - 1}]`
-          return {
-            dec: {
-              [`${colHeaderPath}.cellIndex`]: 1,
-            },
-          }
-        })
+
+        const columnHeaderIndexToUpdate = columnIndex + 1
+        const decPatche: PatchOperations = {
+          dec: {
+            [`${path}.columnHeaders[${columnHeaderIndexToUpdate}].cellIndex`]: 1,
+          },
+        }
 
         // * Prepare insert patches
         const headerInsertPatch: PatchOperations = {
@@ -236,12 +233,7 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
           })) || []
 
         // * Execute all patches in order
-        return patch.execute([
-          ...unsetPatches,
-          ...decPatches,
-          headerInsertPatch,
-          ...cellInsertPatches,
-        ])
+        return patch.execute([...unsetPatches, decPatche, headerInsertPatch, ...cellInsertPatches])
       }
       return console.warn('Something went wrong, please check `handleMoveColumn` implementation')
     },
@@ -263,8 +255,16 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
           <MenuItem text="Add column to the left" onClick={() => handleAddColumn('left')} />
           <MenuItem text="Add column to the right" onClick={() => handleAddColumn('right')} />
           <MenuDivider />
-          <MenuItem text="Move column <-" onClick={() => handleMoveColumn('left')} />
-          <MenuItem text="Move column ->" onClick={() => handleMoveColumn('right')} />
+          <MenuItem
+            text="Move column <-"
+            onClick={() => handleMoveColumn('left')}
+            disabled={columnIndex === 0}
+          />
+          <MenuItem
+            text="Move column ->"
+            onClick={() => handleMoveColumn('right')}
+            disabled={columnIndex - columnCount === -1}
+          />
           <MenuDivider />
           <MenuItem text="Delete column" onClick={handleDeleteColumn} />
         </Menu>

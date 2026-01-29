@@ -11,6 +11,7 @@ interface RowHeaderWithInputProps {
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']
   rowIndex: number
+  rowCount: number
   path: string
 }
 
@@ -20,6 +21,7 @@ const RowHeaderWithInput: ComponentType<RowHeaderWithInputProps> = ({
   patch,
   path,
   rowIndex,
+  rowCount,
 }) => {
   const [title, setTitle] = useState(row.title || '')
   const [isFocused, setIsFocused] = useState(false)
@@ -70,7 +72,7 @@ const RowHeaderWithInput: ComponentType<RowHeaderWithInputProps> = ({
         />
       </StyledCard>
 
-      <RowContextMenu row={row} patch={patch} path={path} rowIndex={rowIndex} />
+      <RowContextMenu row={row} patch={patch} path={path} rowIndex={rowIndex} rowCount={rowCount} />
     </Flex>
   )
 }

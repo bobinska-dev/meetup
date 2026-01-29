@@ -9,6 +9,7 @@ import { RichTableCellType } from '../schemas/cell.object'
 
 interface RowContextMenuProps {
   rowIndex: number
+  rowCount: number
   row: RichTableRowType
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']
@@ -24,7 +25,13 @@ interface RowContextMenuProps {
  * @param patch - {@link OperationsAPI} patch function from Sanity document operations for optimistic changes
  * @param path - {@link Path} to the row in the Sanity document
  */
-const RowContextMenu: ComponentType<RowContextMenuProps> = ({ row, rowIndex, patch, path }) => {
+const RowContextMenu: ComponentType<RowContextMenuProps> = ({
+  row,
+  rowIndex,
+  patch,
+  path,
+  rowCount,
+}) => {
   // * Handle delete row
   const handleDeleteRow = useCallback(() => {
     const rowUnsetPatch = {
@@ -118,8 +125,16 @@ const RowContextMenu: ComponentType<RowContextMenuProps> = ({ row, rowIndex, pat
           <MenuItem text="Add row above" onClick={() => handleAddRow('above')} />
           <MenuItem text="Add row below" onClick={() => handleAddRow('below')} />
           <MenuDivider />
-          <MenuItem text="Move row ↑" onClick={() => handleMoveRow('up')} />
-          <MenuItem text="Move row ↓" onClick={() => handleMoveRow('down')} />
+          <MenuItem
+            text="Move row ↑"
+            onClick={() => handleMoveRow('up')}
+            disabled={rowIndex === 0}
+          />
+          <MenuItem
+            text="Move row ↓"
+            onClick={() => handleMoveRow('down')}
+            disabled={rowIndex - rowCount === -1}
+          />
           <MenuDivider />
           <MenuItem text="Delete row" onClick={handleDeleteRow} />
         </Menu>
