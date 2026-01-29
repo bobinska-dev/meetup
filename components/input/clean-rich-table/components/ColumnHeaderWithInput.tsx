@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import ColumnContextMenu from './ColumnContextMenu'
 import { PatchOperations } from '@sanity/types'
 import { RichTableType } from '../../rich-table/RichTableInput'
+import { getLetterBasedOnIndex } from '../utils/getLetterBasedOnIndex'
 
 interface ColumnHeaderWithInputProps {
   columnHeader: ColumnHeader & ObjectItem
@@ -49,6 +50,7 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
     patch.execute([setPatch])
   }, [title, _id, columnHeader._key])
   // TODO ADD KEY WITH OPEN DIALOG TO FORCE REMOUNT
+  const newColumnTitle = getLetterBasedOnIndex(columnIndex)
   return (
     <StyledCard shadow={isFocused ? 1 : undefined} tone={isFocused ? 'primary' : undefined}>
       <TextInput
@@ -63,7 +65,14 @@ export const ColumnHeaderWithInput: ComponentType<ColumnHeaderWithInputProps> = 
         aria-label="Column Header Title"
         weight={'semibold'}
         onFocus={() => setIsFocused(true)}
-        style={{ textAlign: 'center' }}
+        style={{
+          textAlign: 'center',
+          textOverflow: 'ellipsis',
+          color: 'var(--card-muted-fg-color)',
+        }}
+        title={title}
+        padding={0}
+        placeholder={newColumnTitle}
         suffix={
           <ColumnContextMenu
             patch={patch}

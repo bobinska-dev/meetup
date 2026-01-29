@@ -1,4 +1,4 @@
-import { ComponentType, Fragment } from 'react'
+import { ChangeEvent, ComponentType, Fragment } from 'react'
 import {
   ArrayOfObjectsFormNode,
   ArrayOfObjectsItemMember,
@@ -11,7 +11,7 @@ import {
   pathToString,
 } from 'sanity'
 import { RichTableType } from '../../rich-table/RichTableInput'
-import { Card } from '@sanity/ui'
+import { Card, Flex, Inline, Switch, Text } from '@sanity/ui'
 import TableButtons from './TableButtons'
 import TableGrid from './TableGrid'
 import TableScrollWrapper from './TableScrollWrapper'
@@ -21,6 +21,9 @@ import ColumnHeaderWithInput from './ColumnHeaderWithInput'
 import { RichTableRowType } from '../../../../schemaTypes/rich-table/row.object'
 import ContentPortableTextInput from '../portable-text/ContentPortableTextEditor'
 import RowHeaderWithInput from './RowHeaderWithInput'
+import RowContextMenu from './RowContextMenu'
+import { useToggleTitles } from '../hooks/useToggleTitles'
+import ColumnContextMenu from './ColumnContextMenu'
 
 const Table: ComponentType<
   ObjectInputProps<RichTableType> & {
@@ -63,8 +66,15 @@ const Table: ComponentType<
     ObjectArrayFormNode<ColumnHeader & ObjectItem>
   >[]
 
+  const { hasColumnTitles, hasRowTitles } = value
+  const { toggleColumnTitles, toggleRowTitles } = useToggleTitles(
+    hasColumnTitles,
+    hasRowTitles,
+    patch,
+    path,
+  )
   return (
-    <Card padding={2} border radius={2}>
+    <Card padding={3} border radius={2}>
       <TableButtons path={path} value={value!} _id={_id} patch={patch}>
         <TableScrollWrapper>
           <TableGrid
@@ -82,17 +92,34 @@ const Table: ComponentType<
               // TODO: force remount when columnHeader value has changed in dialog but not in inline table input -> this is maybe caused by missing blur event in the input👇
               // TODO: Add option to hide column headers and row titles
               return (
-                <ColumnHeaderWithInput
-                  columnHeader={colHeaderItem}
-                  _id={_id}
-                  patch={patch}
-                  value={value!}
-                  path={path}
-                  key={colHeaderItem._key}
-                  columnIndex={columnIndex}
-                  rowCount={value?.rows?.length || 0}
-                  columnCount={value?.columnHeaders?.length || 0}
-                />
+                <Fragment key={colHeaderItem._key}>
+                  {hasColumnTitles && (
+                    <ColumnHeaderWithInput
+                      columnHeader={colHeaderItem}
+                      _id={_id}
+                      patch={patch}
+                      value={value!}
+                      path={path}
+                      key={colHeaderItem._key}
+                      columnIndex={columnIndex}
+                      rowCount={value?.rows?.length || 0}
+                      columnCount={value?.columnHeaders?.length || 0}
+                    />
+                  )}
+                  {!hasColumnTitles && (
+                    <ColumnContextMenu
+                      key={colHeaderItem._key}
+                      columnIndex={columnIndex}
+                      columnHeaderKey={colHeaderItem._key}
+                      patch={patch}
+                      value={value!}
+                      path={path}
+                      rowCount={value?.rows?.length || 0}
+                      columnCount={value?.columnHeaders?.length || 0}
+                      iconHorizontal
+                    />
+                  )}
+                </Fragment>
               )
             })}
 
@@ -107,11 +134,19 @@ const Table: ComponentType<
                 return (
                   <Fragment key={cellItem.id}>
                     {/* CONTEXT MENU BUTTON */}
-                    {cellIndex === 0 && (
+                    {cellIndex === 0 && hasRowTitles && (
                       <RowHeaderWithInput
                         row={rowMember.item.value}
                         patch={patch}
                         rowIndex={rowIndex}
+                        path={path}
+                      />
+                    )}
+                    {cellIndex === 0 && !hasRowTitles && (
+                      <RowContextMenu
+                        rowIndex={rowIndex}
+                        row={rowMember.item.value}
+                        patch={patch}
                         path={path}
                       />
                     )}
@@ -129,6 +164,37 @@ const Table: ComponentType<
           </TableGrid>
         </TableScrollWrapper>
       </TableButtons>
+      {isInDialog && (
+        <Flex gap={3} justify={'flex-end'} align={'center'} paddingTop={3}>
+          <Inline space={2}>
+            <Text as={'label'} htmlFor={'row-title-toggle'} size={0} muted>
+              Show row titles
+            </Text>
+            <Switch
+              checked={hasRowTitles}
+              role="switch"
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                toggleRowTitles(e.currentTarget.checked)
+              }
+              label={'Show row titles'}
+              id={'row-title-toggle'}
+            />
+          </Inline>
+          <Inline space={2}>
+            <Text as={'label'} htmlFor={'column-title-toggle'} size={0} muted>
+              Show column titles
+            </Text>
+            <Switch
+              checked={hasColumnTitles}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                toggleColumnTitles(e.currentTarget.checked)
+              }
+              label={'Show column titles'}
+              id={'column-title-toggle'}
+            />
+          </Inline>
+        </Flex>
+      )}
     </Card>
   )
 }

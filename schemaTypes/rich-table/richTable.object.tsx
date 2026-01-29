@@ -35,6 +35,18 @@ export default defineType({
         }),
       ],
     }),
+    defineField({
+      name: 'hasColumnTitles',
+      title: 'Has Column Titles',
+      type: 'boolean',
+      initialValue: true,
+    }),
+    defineField({
+      name: 'hasRowTitles',
+      title: 'Has Row Titles',
+      type: 'boolean',
+      initialValue: true,
+    }),
   ],
   preview: {
     prepare: () => ({

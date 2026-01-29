@@ -19,6 +19,8 @@ import TableWrapper from './table/TableWrapper'
 export interface RichTableType {
   rows: Array<RichTableRowType> | undefined
   columnHeaders?: Array<ColumnHeader & ObjectItem>
+  hasColumnTitles?: boolean
+  hasRowTitles?: boolean
 }
 
 const RichTableInput: ComponentType<ObjectInputProps<RichTableType, ObjectSchemaType>> = (

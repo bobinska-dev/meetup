@@ -1,6 +1,6 @@
 import { ComponentType, useCallback } from 'react'
 import { Button, Menu, MenuButton, MenuDivider, MenuItem } from '@sanity/ui'
-import { EllipsisVerticalIcon } from '@sanity/icons'
+import { EllipsisHorizontalIcon, EllipsisVerticalIcon } from '@sanity/icons'
 import { ObjectItem, OperationsAPI, PortableTextBlock } from 'sanity'
 import { RichTableCellType } from '../../../../schemaTypes/rich-table/cell.object'
 import { generateKey } from '../utils/generateKey'
@@ -17,9 +17,19 @@ interface ColumnMenuButtonProps {
   path: string
   rowCount: number
   columnCount: number
+  iconHorizontal?: boolean
 }
 const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
-  const { patch, columnIndex, columnHeaderKey, path, rowCount, columnCount, value } = props
+  const {
+    patch,
+    columnIndex,
+    columnHeaderKey,
+    path,
+    rowCount,
+    columnCount,
+    value,
+    iconHorizontal,
+  } = props
   const columnHeaderPathString = `${path}.columnHeaders[_key=="${columnHeaderKey}"]`
 
   const handleDeleteColumn = useCallback(async () => {
@@ -31,7 +41,7 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
     )
     const cellUnsetPatches: PatchOperations = {
       unset: cellPathsToUnset,
-    } /*client.patch(_id).unset(cellPathsToUnset)*/
+    }
 
     return patch.execute([headerUnsetPatch, cellUnsetPatches])
   }, [columnCount, rowCount, columnIndex, path, columnHeaderKey])
@@ -41,7 +51,6 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
       const newColumnIndex = side === 'right' ? columnIndex + 1 : columnIndex
       const newColumnHeader: ColumnHeader & ObjectItem = {
         _type: 'columnHeader',
-        title: 'New Column',
         cellIndex: newColumnIndex,
         _key: generateKey(),
       }
@@ -240,7 +249,13 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
 
   return (
     <MenuButton
-      button={<Button icon={EllipsisVerticalIcon} mode={'bleed'} />}
+      button={
+        <Button
+          icon={iconHorizontal ? EllipsisHorizontalIcon : EllipsisVerticalIcon}
+          mode={'bleed'}
+          padding={2}
+        />
+      }
       id="column-menu-button"
       menu={
         <Menu>

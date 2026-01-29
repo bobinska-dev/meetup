@@ -5,6 +5,7 @@ import { RichTableCellType } from '../../../../schemaTypes/rich-table/cell.objec
 import { RichTableRowType } from '../../../../schemaTypes/rich-table/row.object'
 import { generateKey } from '../utils/generateKey'
 
+// Todo add row titles based on numbers
 interface UseAddRowProps {
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']
@@ -35,6 +36,7 @@ export default function useAddRow({ _id, path, value, patch }: UseAddRowProps) {
       }
     })
 
+    // const newRowTitle = `${value?.rows ? value.rows.length + 1 : 1}`
     // Define the new row with the generated cells.
     const newRow: RichTableRowType = {
       _type: 'row',

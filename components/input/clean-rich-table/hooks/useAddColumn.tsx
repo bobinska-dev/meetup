@@ -5,7 +5,9 @@ import { useCallback } from 'react'
 import { RichTableCellType } from '../../../../schemaTypes/rich-table/cell.object'
 import { ColumnHeader } from '../../../../schemaTypes/rich-table/columnHeader.object'
 import { generateKey } from '../utils/generateKey'
+import { getLetterBasedOnIndex } from '../utils/getLetterBasedOnIndex'
 
+// TODO: Add column default titles (based on Alphabet)
 interface UseAddColumnParams {
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']
@@ -30,11 +32,13 @@ export function useAddColumn({ _id, path, value, patch }: UseAddColumnParams) {
       ] as unknown as PortableTextBlock[],
     }
 
+    // Letter in the alphabet based on column count (A, B, C, ...)
+    const newColumnTitle = getLetterBasedOnIndex(colCount)
     // New column header item (title uses current header count when available)
     const newColumnHeaderItem: ColumnHeader & { _key: string; _type: string } = {
       _type: 'columnHeader',
       _key: generateKey(),
-      title: `New column ${colCount ? colCount + 1 : ''}`,
+      // title: newColumnTitle,
       cellIndex: colCount,
     }
 

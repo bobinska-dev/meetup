@@ -1,7 +1,7 @@
 import { defineField, defineType } from 'sanity'
 
 export interface ColumnHeader {
-  title: string
+  title?: string
   /** test to integrate headers with cell keys */
   cellIndex: number
 }
@@ -14,7 +14,6 @@ export default defineType({
       name: 'title',
       title: 'Title',
       type: 'string',
-      validation: (Rule) => Rule.required().error('Column title is required.'),
     }),
     defineField({
       name: 'cellIndex',

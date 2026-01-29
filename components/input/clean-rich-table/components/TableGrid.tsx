@@ -1,7 +1,9 @@
 import { Card } from '@sanity/ui'
 import styled from 'styled-components'
 
-const MINMAX_HEADER_ROW_HEIGHT = 35 // in px
+// TODO add styling conditions for hidden column and row titles (headers)
+
+const MINMAX_HEADER_ROW_HEIGHT = 30 // in px
 const ROW_TITLE_COLUMN_WIDTH = 4 // in rem
 /** A styled Card component that uses CSS Grid to layout its children in a grid format.
  */
