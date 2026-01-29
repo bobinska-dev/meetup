@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 import js from '@eslint/js'
 import { FlatCompat } from '@eslint/eslintrc'
 import reactHooks from 'eslint-plugin-react-hooks'
+import studio from '@sanity/eslint-config-studio'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -15,9 +16,8 @@ const compat = new FlatCompat({
 })
 
 export default defineConfig([
+  ...studio,
   {
-    extends: compat.extends('@sanity/eslint-config-studio'),
-
     plugins: {
       'simple-import-sort': simpleImportSort,
     },

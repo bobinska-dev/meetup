@@ -11,7 +11,7 @@ import {
 } from 'sanity'
 import { Stack } from '@sanity/ui'
 import LoadingIndicator from '../../LoadingIndicator'
-import { RichTableRowType } from '../../../schemaTypes/rich-table/row.object'
+import { RichTableRowType } from './'
 import { ColumnHeader } from '../../../schemaTypes/rich-table/columnHeader.object'
 import Table from './table/Table'
 import TableWrapper from './table/TableWrapper'

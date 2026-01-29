@@ -11,6 +11,7 @@ import { schemaTypes } from './schemaTypes'
 import { newDocumentSettings } from './schemaTypes/newDocumentOptions'
 import { allSingletonTypeNames } from './schemaTypes/singletons'
 import { structure } from './structure'
+import { richTablePlugin } from './plugins/rich-table-plugin'
 
 export default defineConfig({
   name: 'default',
@@ -37,6 +38,8 @@ export default defineConfig({
       schemaTypes: ['page'],
     }),
 
+    // rich table
+    richTablePlugin({}),
     // AI Assist
     assist({
       translate: {
