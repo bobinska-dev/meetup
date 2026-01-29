@@ -1,8 +1,11 @@
-import { ComponentType } from 'react'
+import { ComponentType, useCallback } from 'react'
 import { Button, Menu, MenuButton, MenuDivider, MenuItem } from '@sanity/ui'
 import { EllipsisVerticalIcon } from '@sanity/icons'
-import { OperationsAPI } from 'sanity'
+import { OperationsAPI, PortableTextBlock } from 'sanity'
 import { RichTableRowType } from '../schemas/row.object'
+import { generateKey } from '../utils/generateKey'
+import { PatchOperations } from '@sanity/types'
+import { RichTableCellType } from '../schemas/cell.object'
 
 interface RowContextMenuProps {
   rowIndex: number
@@ -22,19 +25,103 @@ interface RowContextMenuProps {
  * @param path - {@link Path} to the row in the Sanity document
  */
 const RowContextMenu: ComponentType<RowContextMenuProps> = ({ row, rowIndex, patch, path }) => {
+  // * Handle delete row
+  const handleDeleteRow = useCallback(() => {
+    const rowUnsetPatch = {
+      unset: [`${path}.rows[${rowIndex}]`],
+    }
+    return patch.execute([rowUnsetPatch])
+  }, [patch, path, rowIndex])
+
+  // * Handle add row
+  const handleAddRow = useCallback(
+    (side: 'above' | 'below') => {
+      const currentRowPathString = `${path}.rows[${rowIndex}]`
+      const newCells: RichTableRowType['cells'] = row.cells?.map(() => {
+        const newCell: RichTableCellType = {
+          _type: 'richTableCell',
+          _key: generateKey(),
+          content: [
+            {
+              _type: 'block',
+              _key: generateKey(),
+              markDefs: [],
+              children: [{ _type: 'span', text: '', marks: [] }],
+            },
+          ] as unknown as PortableTextBlock[],
+        }
+        return newCell
+      })
+
+      const newRow: RichTableRowType = {
+        _type: 'row',
+        _key: generateKey(),
+        cells: newCells,
+      }
+      const addRowPatch: PatchOperations =
+        side === 'below'
+          ? {
+              insert: {
+                after: currentRowPathString,
+                items: [newRow],
+              },
+            }
+          : {
+              insert: {
+                before: currentRowPathString,
+                items: [newRow],
+              },
+            }
+
+      return patch.execute([addRowPatch])
+    },
+    [patch, path, row.cells, rowIndex],
+  )
+
+  // * Handle row move
+  const handleMoveRow = useCallback(
+    (direction: 'up' | 'down') => {
+      const rowToMove = row
+      const unsetPatch: PatchOperations = {
+        unset: [`${path}.rows[${rowIndex}]`],
+      }
+      if (direction === 'up') {
+        const insertPatch: PatchOperations = {
+          insert: {
+            before: `${path}.rows[${rowIndex - 1}]`,
+            items: [rowToMove],
+          },
+        }
+        return patch.execute([unsetPatch, insertPatch])
+      }
+      if (direction === 'down') {
+        const insertPatch: PatchOperations = {
+          insert: {
+            after: `${path}.rows[${rowIndex + 1}]`,
+            items: [rowToMove],
+          },
+        }
+        return patch.execute([unsetPatch, insertPatch])
+      }
+      return console.warn(
+        'Something went wrong while moving the row. Please check RowContextMenu.tsx and the handleMoveRow function.',
+      )
+    },
+    [patch, path, row, rowIndex],
+  )
   return (
     <MenuButton
       button={<Button icon={EllipsisVerticalIcon} mode={'bleed'} padding={2} />}
       id="row-menu-button"
       menu={
         <Menu>
-          <MenuItem text="Add row above" disabled />
-          <MenuItem text="Add row below" disabled />
+          <MenuItem text="Add row above" onClick={() => handleAddRow('above')} />
+          <MenuItem text="Add row below" onClick={() => handleAddRow('below')} />
           <MenuDivider />
-          <MenuItem text="Move row ↑" onClick={() => console.log('moved')} disabled />
-          <MenuItem text="Move row ↓" onClick={() => console.log('moved')} disabled />
+          <MenuItem text="Move row ↑" onClick={() => handleMoveRow('up')} />
+          <MenuItem text="Move row ↓" onClick={() => handleMoveRow('down')} />
           <MenuDivider />
-          <MenuItem text="Delete row" disabled />
+          <MenuItem text="Delete row" onClick={handleDeleteRow} />
         </Menu>
       }
       popover={{ placement: 'right', portal: true }}
