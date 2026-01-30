@@ -5,11 +5,11 @@ import { getPublishedId, ObjectInputProps, pathToString, useDocumentOperation, u
 
 import { useToggleTitles } from '../hooks/useToggleTitles'
 import { RichTableType } from '../schemas/richTable.object'
+import ConfirmClearTableDialog from './ConfirmClearTableDialog'
 import ExpandedTableDialog from './ExpandedTableDialog'
 import InitialiseTable from './InitialiseTable'
 import LoadingIndicator from './LoadingIndicator'
 import Table from './Table'
-import ConfirmClearTableDialog from './ConfirmClearTableDialog'
 
 // TODO: read only for new documents that do not yet exist OR way to detect if document has yet to be created
 const RichTableInput: ComponentType<
