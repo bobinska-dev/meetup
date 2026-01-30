@@ -1,5 +1,5 @@
 import { Box, Button, Card, Flex, Text } from '@sanity/ui'
-import React, { ComponentType, useCallback, useState } from 'react'
+import React, { ComponentType, useCallback, useEffect, useState } from 'react'
 import { OperationsAPI, PortableTextBlock } from 'sanity'
 
 import { RichTableCellType } from '../schemas/cell.object'
@@ -39,12 +39,23 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   readOnly,
 }) => {
   // * STATES
+  // Selected states for selection to commit
   const [selected, setSelected] = useState<TableSize>({
     rows: 0,
     cols: 0,
   })
+  // Hovered states for mouseover selection
   const [hover, setHover] = useState<TableSize>({ rows: 0, cols: 0 })
 
+  // Dragging states for click-and-drag selection
+  const [dragging, setDragging] = useState<boolean>(false)
+  const [dragStart, setDragStart] = useState<TableSize | null>(null)
+
+  const computeRect = (a: TableSize, b: TableSize) => {
+    const rows = Math.abs(b.rows - a.rows) + 1
+    const cols = Math.abs(b.cols - a.cols) + 1
+    return { rows, cols }
+  }
   const handleCommit = useCallback(
     (rowCount: number, cols: number) => {
       setSelected({ rows: rowCount, cols: cols })
@@ -114,6 +125,19 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   const effectiveRows = selected.rows || hover.rows
   const effectiveCols = selected.cols || hover.cols
 
+  // window-level mouseup to finalize drag if releasing outside component
+  useEffect(() => {
+    const onWindowUp = () => {
+      if (dragging && hover.rows > 0 && hover.cols > 0) {
+        handleCommit(hover.rows, hover.cols)
+      }
+      setDragging(false)
+      setDragStart(null)
+    }
+    window.addEventListener('mouseup', onWindowUp)
+    return () => window.removeEventListener('mouseup', onWindowUp)
+  }, [dragging, hover, handleCommit])
+
   return (
     <Card
       padding={3}
@@ -132,6 +156,13 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
           onChange: () => handleCommit(selected.rows, selected.cols),
         })
       }
+      onMouseUp={() => {
+        if (dragging && hover.rows > 0 && hover.cols > 0) {
+          handleCommit(hover.rows, hover.cols)
+        }
+        setDragging(false)
+        setDragStart(null)
+      }}
       aria-label="Table size picker"
       style={{
         display: 'inline-block',
@@ -157,9 +188,28 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
               return (
                 <Button
                   key={`${rowCount}-${colCount}`}
-                  onMouseEnter={() => setHover({ rows: rowCount, cols: colCount })}
+                  onMouseEnter={() => {
+                    if (dragging && dragStart) {
+                      const rect = computeRect(dragStart, { rows: rowCount, cols: colCount })
+                      setHover(rect)
+                    } else {
+                      setHover({ rows: rowCount, cols: colCount })
+                    }
+                  }}
+                  onMouseDown={(e) => {
+                    if (readOnly) return
+                    // only start drag on primary button
+                    if (e.button !== 0) return
+                    e.preventDefault()
+                    e.stopPropagation()
+                    setDragging(true)
+                    const start = { rows: rowCount, cols: colCount }
+                    setDragStart(start)
+                    setHover(start)
+                  }}
                   onClick={() => {
-                    handleCommit(rowCount, colCount)
+                    // keep single-click commit for accessibility
+                    if (!dragging) handleCommit(rowCount, colCount)
                   }}
                   role="button"
                   aria-pressed={isSelected}
