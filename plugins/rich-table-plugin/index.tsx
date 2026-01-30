@@ -1,14 +1,21 @@
-import { definePlugin } from 'sanity'
+import { definePlugin, ImageDefinition, ObjectDefinition } from 'sanity'
 
 import cellObject from './schemas/cell.object'
 import columnHeaderObject from './schemas/columnHeader.object'
-import content from './schemas/content'
+import { defineContentArrayMember } from './schemas/content'
 import richTableBlock from './schemas/richTable.block'
 import richTableObject from './schemas/richTable.object'
 import rowObject from './schemas/row.object'
+import { ComponentType } from 'react'
 
-interface RichTablePluginOptions {
+interface CustomBlockType {
+  type: ObjectDefinition | ImageDefinition
+  icon: ComponentType
+  defaultValues?: Record<string, unknown>
+}
+export interface RichTablePluginOptions {
   // config options coming soon!
+  customBlockTypes?: Array<CustomBlockType> // PortableTextMemberSchemaTypes['blockObjects']
 }
 /** # Rich Table Plugin for Sanity by Saskia Bobinska
  *
@@ -69,11 +76,18 @@ interface RichTablePluginOptions {
  *  - Enhanced accessibility features
  *  - Integration with other Sanity plugins and tools
  */
-export const richTablePlugin = definePlugin<RichTablePluginOptions>(({}) => ({
+export const richTablePlugin = definePlugin<RichTablePluginOptions>(({ customBlockTypes }) => ({
   name: 'rich-table',
   title: 'Rich Table Plugin',
 
   schema: {
-    types: [richTableObject, rowObject, cellObject, columnHeaderObject, richTableBlock, content],
+    types: [
+      richTableObject,
+      rowObject,
+      cellObject,
+      columnHeaderObject,
+      richTableBlock,
+      defineContentArrayMember({ customBlockTypes }) /*content*/,
+    ],
   },
 }))

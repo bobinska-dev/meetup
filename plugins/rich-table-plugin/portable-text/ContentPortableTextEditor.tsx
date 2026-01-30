@@ -1,7 +1,14 @@
 import { EditorConfig, EditorProvider } from '@portabletext/editor'
 import { Card } from '@sanity/ui'
 import { ComponentType, Suspense, useCallback, useRef, useState } from 'react'
-import { ArrayDefinition, ArraySchemaType, InputProps, pathToString, PortableTextBlock, useFormValue } from 'sanity'
+import {
+  ArrayDefinition,
+  ArraySchemaType,
+  InputProps,
+  pathToString,
+  PortableTextBlock,
+  useFormValue,
+} from 'sanity'
 
 import LoadingIndicator from '../components/LoadingIndicator'
 import content from '../schemas/content'
@@ -44,18 +51,19 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
   // STATES
   const [focused, setFocused] = useState<boolean>(false)
   const handleFocus = useCallback((state: boolean) => setFocused(state), [])
+
+  // @ts-ignore
+  const pteSchemaType = props.schemaType ? props.schemaType.type.type : content
+
+  console.log('PTE SCHEMA TYPE', pteSchemaType)
   // * INITIAL CONFIG FOR EDITOR PROVIDER
   const initialConfig = useRef<EditorConfig>({
     initialValue: props.value,
     readOnly: props.readOnly ?? false,
 
-    // @ts-ignore
-    schema: props.schemaType // TODO verify where the TS error is coming from here
-      ? props.schemaType
-      : // Backup so that undefined schemaType doesn't break the component
-        content,
+    schema: pteSchemaType,
   })
-
+  console.log(props)
   // TODO: fullscreen handling
   // const { getFullscreenPath, setFullscreenPath } = useFullscreenPTE()
 
@@ -86,7 +94,13 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
             renderListItem={renderListItem}
             renderAnnotation={renderAnnotation}
           />
-          {!props.readOnly && <ButtonToolbar focused={focused} editorRef={initialConfig} />}
+          {!props.readOnly && (
+            <ButtonToolbar
+              focused={focused}
+              editorRef={initialConfig}
+              schemaType={props.schemaType}
+            />
+          )}
         </EditorProvider>
       </Card>
     </Suspense>

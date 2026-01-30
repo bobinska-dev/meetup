@@ -3,13 +3,15 @@ import { ChangeEvent, ComponentType, Fragment } from 'react'
 import {
   ArrayOfObjectsFormNode,
   ArrayOfObjectsItemMember,
+  ArraySchemaType,
   FieldMember,
   ObjectArrayFormNode,
   ObjectFormNode,
   ObjectInputProps,
   ObjectItem,
   OperationsAPI,
-  pathToString
+  pathToString,
+  PortableTextBlock,
 } from 'sanity'
 
 import { useToggleTitles } from '../hooks/useToggleTitles'
@@ -138,7 +140,9 @@ const Table: ComponentType<
                 const cellItem = cellMember.item
                 const cellPTEPath = cellItem.path.concat('content')
                 const cellValue = value?.rows?.[rowIndex]?.cells?.[cellIndex]?.content
-
+                const cellContentSchemaType = cellItem.schemaType.fields.find(
+                  (field) => field.name === 'content',
+                ) as ArraySchemaType<PortableTextBlock>
                 return (
                   <Fragment key={cellItem.id}>
                     {/* CONTEXT MENU BUTTON */}
@@ -169,6 +173,7 @@ const Table: ComponentType<
                       value={cellValue}
                       key={cellItem.id}
                       readOnly={props.readOnly}
+                      schemaType={cellContentSchemaType}
                     />
                   </Fragment>
                 )

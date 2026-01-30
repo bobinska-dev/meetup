@@ -1,4 +1,5 @@
 import { defineArrayMember, defineType } from 'sanity'
+import { RichTablePluginOptions } from '../index'
 
 export default defineType({
   name: 'content',
@@ -24,3 +25,25 @@ export default defineType({
     // TODO: test out richTable inside of portable text
   ],
 })
+export const defineContentArrayMember = ({
+  customBlockTypes,
+}: {
+  customBlockTypes?: RichTablePluginOptions['customBlockTypes']
+}) => {
+  const blockTypes = customBlockTypes ? customBlockTypes : []
+  const customBlockMembers = blockTypes.map((blockType) => {
+    console.log('defining custom block member for rich table content:', blockType)
+    return defineArrayMember({ ...(blockType.type as any), icon: blockType.icon })
+  })
+  return defineArrayMember({
+    name: 'content',
+    title: 'Rich table content',
+    type: 'array',
+    of: [
+      defineArrayMember({
+        type: 'block',
+      }),
+      ...customBlockMembers,
+    ],
+  })
+}

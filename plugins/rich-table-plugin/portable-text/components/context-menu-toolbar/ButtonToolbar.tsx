@@ -7,7 +7,6 @@ import { ComponentType, RefObject, useCallback, useEffect, useRef, useState } fr
 import styled from 'styled-components'
 
 import { extendAnnotation } from '../../configs/extendAnnotation'
-import { extendBlockObject } from '../../configs/extendBlockObject'
 import extendDecorator from '../../configs/extendDecorators'
 import { extendInlineObject } from '../../configs/extendInlineObject'
 import { extendList } from '../../configs/extendList'
@@ -18,19 +17,24 @@ import AnnotationButton from './AnnotationButton'
 import DecoratorButton from './DecoratorButton'
 import FloatingButton from './FloatingButton'
 import ListButton from './ListButton'
+import BlockButton from './BlockButton'
+import { ArraySchemaType, PortableTextBlock } from 'sanity'
 
-const ButtonToolbar: ComponentType<{ focused: boolean; editorRef: RefObject<EditorConfig> }> = ({
-  focused,
-  editorRef,
-}) => {
+// TODO: check status of icon bug: https://linear.app/sanity/issue/CRX-1894/usetoolbarschema-or-toolbarschema-icons-stripped-from-schema
+const ButtonToolbar: ComponentType<{
+  focused: boolean
+  editorRef: RefObject<EditorConfig>
+  schemaType?: ArraySchemaType<PortableTextBlock>
+}> = ({ focused, editorRef, schemaType }) => {
   const toolbarSchema = useToolbarSchema({
     extendDecorator,
     extendAnnotation,
     extendStyle,
     extendList,
-    extendBlockObject,
+    // extendBlockObject:(props)=> extendBlockObject({ ...props, types: schemaType?.type?.of }),
     extendInlineObject,
   })
+  console.log('toolbarSchema', toolbarSchema, schemaType)
 
   // STATES
   const [open, setOpen] = useState(false)
@@ -281,6 +285,15 @@ const ButtonToolbar: ComponentType<{ focused: boolean; editorRef: RefObject<Edit
               {toolbarSchema.lists?.map((list) => (
                 <ListButton key={list.name} list={list} />
               ))}
+              {toolbarSchema.blockObjects?.map((blockObject) => {
+                // @ts-ignore
+                const blockIcon = schemaType?.type?.of?.find(
+                  // @ts-ignore
+                  (block) => blockObject.name === block.name,
+                )?.icon
+                const blockObjectWithIcon = { ...blockObject, icon: blockIcon }
+                return <BlockButton key={blockObject.name} blockObject={blockObjectWithIcon} />
+              })}
             </Flex>
           </Box>
         }

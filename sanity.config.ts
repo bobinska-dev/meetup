@@ -12,6 +12,7 @@ import { newDocumentSettings } from './schemaTypes/newDocumentOptions'
 import { allSingletonTypeNames } from './schemaTypes/singletons'
 import { structure } from './structure'
 import { richTablePlugin } from './plugins/rich-table-plugin'
+import { ImageIcon } from '@sanity/icons'
 
 export default defineConfig({
   name: 'default',
@@ -39,7 +40,20 @@ export default defineConfig({
     }),
 
     // rich table
-    richTablePlugin({}),
+    richTablePlugin({
+      customBlockTypes: [
+        {
+          icon: ImageIcon,
+          type: {
+            name: 'image',
+            type: 'image',
+            title: 'Image',
+            options: { hotspot: true },
+            icon: ImageIcon,
+          },
+        },
+      ],
+    }),
     // AI Assist
     assist({
       translate: {
