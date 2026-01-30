@@ -30,10 +30,11 @@ const Table: ComponentType<
   ObjectInputProps<RichTableType> & {
     handleOpen?: () => void
     isInDialog?: boolean
+    isInPortableText?: boolean
     /** Patch function from Sanity document operations for optimistic changes */
     patch: OperationsAPI['patch']
   }
-> = ({ isInDialog = false, handleOpen, value, onChange, patch, ...props }) => {
+> = ({ isInDialog = false, handleOpen, value, onChange, patch, isInPortableText, ...props }) => {
   // * Prepare the path
   const path = pathToString(props.path)
   // * Prepare members
@@ -75,7 +76,12 @@ const Table: ComponentType<
   )
 
   return (
-    <Card padding={3} border radius={2}>
+    <Card
+      padding={3}
+      border
+      radius={2}
+      onDoubleClick={() => (isInPortableText && handleOpen?.() ? handleOpen() : undefined)}
+    >
       <TableButtons path={path} value={value!} patch={patch} readOnly={props.readOnly}>
         <TableScrollWrapper>
           <TableGrid

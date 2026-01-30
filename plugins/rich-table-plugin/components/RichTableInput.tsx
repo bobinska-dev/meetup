@@ -89,6 +89,7 @@ const RichTableInput: ComponentType<
                 isInDialog={false}
                 handleOpen={handleOpen}
                 patch={patch}
+                isInPortableText={props.isInPortableText}
                 // We need this key to force remounting the table when opening/closing the dialog
                 key={openDialog ? 'table-in-dialog-open' : 'table-in-dialog-closed'}
                 readOnly={props.isInPortableText ? true : props.readOnly}
