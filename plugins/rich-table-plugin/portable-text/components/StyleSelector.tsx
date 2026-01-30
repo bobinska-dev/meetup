@@ -24,6 +24,7 @@ const StyleSelector: ComponentType<{ toolbarSchema: ToolbarSchema }> = ({ toolba
             mode={'bleed'}
             iconRight={<ChevronDownIcon />}
             tone={'default'}
+            tabIndex={-1}
           />
         }
         id="style-selection"

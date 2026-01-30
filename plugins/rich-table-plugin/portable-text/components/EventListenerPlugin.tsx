@@ -6,15 +6,22 @@ const CustomListenerPlugin: ComponentType<{
   path: Path
   _id: string
   _type: string
+  handleFocus: (state: boolean) => void
   // on: (event: EditorEmittedEvent) => void
 }> = (props) => {
-  const { _id, _type } = props
+  const { _id, _type, handleFocus } = props
   const { patch } = useDocumentOperation(getPublishedId(_id), _type)
   return (
     <EventListenerPlugin
       on={(event) => {
-        // * HANDLE MUTATION EVENTS
+        if (event.type === 'focused') {
+          handleFocus(true)
+        }
+        if (event.type === 'blurred') {
+          handleFocus(false)
+        }
         if (event.type === 'mutation') {
+          // * HANDLE MUTATION EVENTS
           const preparedPatches = event.patches.map((patch) => {
             if (patch.type === 'unset') {
               return {

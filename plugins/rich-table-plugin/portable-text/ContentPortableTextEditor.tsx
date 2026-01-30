@@ -1,27 +1,21 @@
-import {
-  ArrayDefinition,
-  ArraySchemaType,
-  InputProps,
-  pathToString,
-  PortableTextBlock,
-  useFormValue,
-} from 'sanity'
-import { ComponentType, Suspense, useRef } from 'react'
-import { Card } from '@sanity/ui'
 import { EditorConfig, EditorProvider } from '@portabletext/editor'
-import { StyledPortableTextEditable } from './components/StyledPortableTextEditable'
-import CustomListenerPlugin from './components/EventListenerPlugin'
-import renderDecorator from './configs/renderer/renderDecorators'
-import renderStyle from './configs/renderer/renderStyle'
+import { Card } from '@sanity/ui'
+import { ComponentType, Suspense, useCallback, useRef, useState } from 'react'
+import { ArrayDefinition, ArraySchemaType, InputProps, pathToString, PortableTextBlock, useFormValue } from 'sanity'
+
 import LoadingIndicator from '../components/LoadingIndicator'
-import { SlashCommandPickerPlugin } from './pte-slash-commands/SlashCommandPicker'
-import { renderListItem } from './configs/renderer/renderListItem'
-import { renderAnnotation } from './configs/renderer/renderAnnotation'
-import { LinkPlugin } from './components/LinkPlugin'
-import ButtonToolbar from './components/context-menu-toolbar/ButtonToolbar'
-import { EmojiPickerPlugin } from './emoji-picker/EmojiPicker'
-import { renderBlock } from './configs/renderer/renderBlock'
 import content from '../schemas/content'
+import ButtonToolbar from './components/context-menu-toolbar/ButtonToolbar'
+import CustomListenerPlugin from './components/EventListenerPlugin'
+import { LinkPlugin } from './components/LinkPlugin'
+import { StyledPortableTextEditable } from './components/StyledPortableTextEditable'
+import { renderAnnotation } from './configs/renderer/renderAnnotation'
+import { renderBlock } from './configs/renderer/renderBlock'
+import renderDecorator from './configs/renderer/renderDecorators'
+import { renderListItem } from './configs/renderer/renderListItem'
+import renderStyle from './configs/renderer/renderStyle'
+import { EmojiPickerPlugin } from './emoji-picker/EmojiPicker'
+import { SlashCommandPickerPlugin } from './pte-slash-commands/SlashCommandPicker'
 
 // import { useFullscreenPTE } from './hooks/useFullScreenPTE'
 
@@ -47,7 +41,9 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
   // * MISC
   const _id = useFormValue(['_id']) as string
   const _type = useFormValue(['_type']) as string
-
+  // STATES
+  const [focused, setFocused] = useState<boolean>(false)
+  const handleFocus = useCallback((state: boolean) => setFocused(state), [])
   // * INITIAL CONFIG FOR EDITOR PROVIDER
   const initialConfig = useRef<EditorConfig>({
     initialValue: props.value,
@@ -73,11 +69,15 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
       >
         {/* eslint-disable-next-line react-hooks/refs */}
         <EditorProvider initialConfig={initialConfig.current}>
-          <CustomListenerPlugin _id={_id} _type={_type} path={props.path} />
+          <CustomListenerPlugin
+            _id={_id}
+            _type={_type}
+            path={props.path}
+            handleFocus={handleFocus}
+          />
           <SlashCommandPickerPlugin />
           <LinkPlugin />
           <EmojiPickerPlugin />
-          {!props.readOnly && <ButtonToolbar />}
 
           <StyledPortableTextEditable
             renderStyle={renderStyle}
@@ -86,6 +86,7 @@ const ContentPortableTextInput: ComponentType<ContentPortableTextInputProps> = (
             renderListItem={renderListItem}
             renderAnnotation={renderAnnotation}
           />
+          {!props.readOnly && <ButtonToolbar focused={focused} editorRef={initialConfig} />}
         </EditorProvider>
       </Card>
     </Suspense>
