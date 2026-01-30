@@ -6,6 +6,13 @@ import { RichTableRowType } from '../schemas/row.object'
 import { generateKey } from '../utils/generateKey'
 import { PatchOperations } from '@sanity/types'
 import { RichTableCellType } from '../schemas/cell.object'
+import {
+  TbArrowBarDown,
+  TbArrowBarUp,
+  TbRowInsertBottom,
+  TbRowInsertTop,
+  TbRowRemove,
+} from 'react-icons/tb'
 
 interface RowContextMenuProps {
   rowIndex: number
@@ -127,28 +134,37 @@ const RowContextMenu: ComponentType<RowContextMenuProps> = ({
       menu={
         <Menu>
           <MenuItem
-            text="Add row above"
+            text="Add row (above)"
             onClick={() => handleAddRow('above')}
             disabled={readOnly}
+            icon={TbRowInsertTop}
           />
           <MenuItem
-            text="Add row below"
+            text="Add row (below)"
             onClick={() => handleAddRow('below')}
             disabled={readOnly}
+            icon={TbRowInsertBottom}
           />
           <MenuDivider />
           <MenuItem
-            text="Move row ↑"
+            text="Move row (up)"
             onClick={() => handleMoveRow('up')}
             disabled={readOnly || rowIndex === 0}
+            icon={TbArrowBarUp}
           />
           <MenuItem
-            text="Move row ↓"
+            text="Move row (down)"
             onClick={() => handleMoveRow('down')}
             disabled={readOnly || rowIndex - rowCount === -1}
+            icon={TbArrowBarDown}
           />
           <MenuDivider />
-          <MenuItem text="Delete row" onClick={handleDeleteRow} disabled={readOnly} />
+          <MenuItem
+            text="Remove row"
+            onClick={handleDeleteRow}
+            disabled={readOnly}
+            icon={TbRowRemove}
+          />
         </Menu>
       }
       popover={{ placement: 'right', portal: true }}
