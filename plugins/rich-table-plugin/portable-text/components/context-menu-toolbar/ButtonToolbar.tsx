@@ -1,8 +1,10 @@
 // typescript
+import { EditorConfig } from '@portabletext/editor'
 import { useToolbarSchema } from '@portabletext/toolbar'
 import { BlockContentIcon } from '@sanity/icons'
 import { Box, Card, Flex, Popover, Text } from '@sanity/ui'
 import { ComponentType, RefObject, useCallback, useEffect, useRef, useState } from 'react'
+import styled from 'styled-components'
 
 import { extendAnnotation } from '../../configs/extendAnnotation'
 import { extendBlockObject } from '../../configs/extendBlockObject'
@@ -16,8 +18,6 @@ import AnnotationButton from './AnnotationButton'
 import DecoratorButton from './DecoratorButton'
 import FloatingButton from './FloatingButton'
 import ListButton from './ListButton'
-import styled from 'styled-components'
-import { EditorConfig } from '@portabletext/editor'
 
 const ButtonToolbar: ComponentType<{ focused: boolean; editorRef: RefObject<EditorConfig> }> = ({
   focused,

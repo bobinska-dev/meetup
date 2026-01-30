@@ -5,7 +5,6 @@ import { RichTableCellType } from '../schemas/cell.object'
 import { RichTableRowType } from '../schemas/row.object'
 import { generateKey } from '../utils/generateKey'
 
-// Todo add row titles based on numbers
 interface UseAddRowProps {
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']

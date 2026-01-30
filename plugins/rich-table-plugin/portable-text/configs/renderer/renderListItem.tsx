@@ -18,6 +18,8 @@ const StyledLi = styled.li<{ $level: number; $listType: 'bullet' | 'number' }>`
 
   margin-left: ${(props) => (props.$level ? `${props.$level}rem` : '0rem')};
   list-style-position: outside;
+  // no padding top, small padding bottom
+  padding: 0.1rem 0rem 0.25rem 0rem;
 
   // This is needed, so that the text and marker are aligned
   > div > div {

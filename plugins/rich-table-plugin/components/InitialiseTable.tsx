@@ -1,6 +1,13 @@
 import { Box, Button, Card, Flex, Text } from '@sanity/ui'
 import React, { ComponentType, useCallback, useEffect, useState } from 'react'
-import { OperationsAPI, PortableTextBlock } from 'sanity'
+import {
+  FormPatch,
+  OperationsAPI,
+  PatchEvent,
+  PortableTextBlock,
+  SANITY_PATCH_TYPE,
+  stringToPath,
+} from 'sanity'
 
 import { RichTableCellType } from '../schemas/cell.object'
 import { ColumnHeader } from '../schemas/columnHeader.object'
@@ -21,14 +28,11 @@ interface InitialiseTableProps {
   patch: OperationsAPI['patch']
   isInPortableText?: boolean
   readOnly: boolean | undefined
+  onChange: (patch: FormPatch | FormPatch[] | PatchEvent) => void
 }
 
 const CELL_SIZE = 28
 const GAP = 6
-
-// TODO: add spinner or some other indictor after selection of table size -> atm this is taking too long for the UI to update after patch is gone through
-// -> also maybe add toast notification on success / error
-// TODO: add a way to create a document when doc was newly created -> _id is available but no way to check if doc exists yet or not
 
 const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   maxRows = 10,
@@ -37,6 +41,7 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   patch,
   isInPortableText,
   readOnly,
+  onChange,
 }) => {
   // * STATES
   // Selected states for selection to commit
@@ -51,6 +56,7 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   const [dragging, setDragging] = useState<boolean>(false)
   const [dragStart, setDragStart] = useState<TableSize | null>(null)
 
+  // * HELPERS
   const computeRect = (a: TableSize, b: TableSize) => {
     const rows = Math.abs(b.rows - a.rows) + 1
     const cols = Math.abs(b.cols - a.cols) + 1
@@ -59,6 +65,18 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
   const handleCommit = useCallback(
     (rowCount: number, cols: number) => {
       setSelected({ rows: rowCount, cols: cols })
+
+      // use onChange to create new document by setting the object value to an empty object
+      onChange(
+        PatchEvent.from([
+          {
+            type: 'set',
+            path: stringToPath(path),
+            value: {},
+            patchType: SANITY_PATCH_TYPE,
+          },
+        ]),
+      )
 
       // Prepare the initial table value
       // Cells per row
@@ -118,8 +136,19 @@ const InitialiseTable: ComponentType<InitialiseTableProps> = ({
           },
         },
       ])
+      // TODO: find out why this does not work from Bjørge
+      /* return onChange(
+        PatchEvent.from([
+          {
+            type: 'set',
+            path: stringToPath(path),
+            value: initialTableValue as any,
+            patchType: SANITY_PATCH_TYPE,
+          },
+        ]),
+      )*/
     },
-    [path, patch, isInPortableText],
+    [path, patch, isInPortableText, onChange],
   )
   // * COMMIT SELECTION
   const effectiveRows = selected.rows || hover.rows

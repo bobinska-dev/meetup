@@ -1,7 +1,13 @@
 import { ExpandIcon, ResetIcon } from '@sanity/icons'
 import { Box, Button, Flex, Inline, Stack, Switch, Text, Tooltip } from '@sanity/ui'
 import { ChangeEvent, ComponentType, Suspense, useCallback, useState } from 'react'
-import { getPublishedId, ObjectInputProps, pathToString, useDocumentOperation, useFormValue } from 'sanity'
+import {
+  getPublishedId,
+  ObjectInputProps,
+  pathToString,
+  useDocumentOperation,
+  useFormValue,
+} from 'sanity'
 
 import { useToggleTitles } from '../hooks/useToggleTitles'
 import { RichTableType } from '../schemas/richTable.object'
@@ -11,7 +17,6 @@ import InitialiseTable from './InitialiseTable'
 import LoadingIndicator from './LoadingIndicator'
 import Table from './Table'
 
-// TODO: read only for new documents that do not yet exist OR way to detect if document has yet to be created
 const RichTableInput: ComponentType<
   ObjectInputProps<RichTableType> & { isInPortableText?: boolean }
 > = (props) => {
@@ -52,6 +57,7 @@ const RichTableInput: ComponentType<
             path={pathString}
             isInPortableText={props.isInPortableText}
             readOnly={props.readOnly}
+            onChange={props.onChange}
           />
         )}
         {props.value && props.value.rows && (

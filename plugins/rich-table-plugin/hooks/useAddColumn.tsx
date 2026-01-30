@@ -7,7 +7,6 @@ import { RichTableCellType } from '../schemas/cell.object'
 import { ColumnHeader } from '../schemas/columnHeader.object'
 import { RichTableType } from '../schemas/richTable.object'
 
-// TODO: Add column default titles (based on Alphabet)
 interface UseAddColumnParams {
   /** Patch function from Sanity document operations for optimistic changes */
   patch: OperationsAPI['patch']

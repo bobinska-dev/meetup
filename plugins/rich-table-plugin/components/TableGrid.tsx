@@ -1,8 +1,6 @@
 import { Card } from '@sanity/ui'
 import styled from 'styled-components'
 
-// TODO add styling conditions for hidden column and row titles (headers)
-
 const MINMAX_HEADER_ROW_HEIGHT = 30 // in px
 const ROW_TITLE_COLUMN_WIDTH = 4 // in rem
 const ROW_COLUMN_WIDTH = 2 // in rem
