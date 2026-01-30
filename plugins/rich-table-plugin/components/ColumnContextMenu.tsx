@@ -128,6 +128,7 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
     [columnCount, rowCount, columnIndex, path, columnHeaderPathString, patch],
   )
 
+  // TODO: fix issue with cell index not being updated correctly when moving columns multiple times
   const handleMoveColumn = useCallback(
     (direction: 'left' | 'right') => {
       // First we store the current column header and cells (with their values) to temporary variables

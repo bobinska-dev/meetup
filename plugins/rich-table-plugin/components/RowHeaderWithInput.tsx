@@ -86,6 +86,7 @@ const RowHeaderWithInput: ComponentType<RowHeaderWithInputProps> = ({
     </Flex>
   )
 }
+
 const StyledCard = styled(Card)<{ $isFocused?: boolean }>`
   max-height: 50px;
   border: unset;

@@ -5,4 +5,6 @@ import styled from 'styled-components'
  */
 export default styled(Card)`
   overflow-x: scroll;
+  max-height: 50vh;
+  overflow-y: auto;
 `

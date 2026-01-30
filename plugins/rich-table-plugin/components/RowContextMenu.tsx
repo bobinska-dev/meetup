@@ -108,7 +108,7 @@ const RowContextMenu: ComponentType<RowContextMenuProps> = ({
       if (direction === 'down') {
         const insertPatch: PatchOperations = {
           insert: {
-            after: `${path}.rows[${rowIndex + 1}]`,
+            after: `${path}.rows[${rowIndex}]`,
             items: [rowToMove],
           },
         }

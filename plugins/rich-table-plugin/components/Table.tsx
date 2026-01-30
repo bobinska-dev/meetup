@@ -26,6 +26,7 @@ import TableButtons from './TableButtons'
 import TableGrid from './TableGrid'
 import TableScrollWrapper from './TableScrollWrapper'
 
+// TODO: make row title / context menu sticky to the left side when scrolling horizontally
 const Table: ComponentType<
   ObjectInputProps<RichTableType> & {
     handleOpen?: () => void
