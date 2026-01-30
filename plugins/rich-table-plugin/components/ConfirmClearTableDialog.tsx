@@ -17,7 +17,8 @@ const ConfirmClearTableDialog: ComponentType<ConfirmClearTableDialogProps> = ({
 }) => {
   const handleConfirm = useCallback(() => {
     patch.execute([{ unset: [path] }])
-  }, [patch, path])
+    return onClose()
+  }, [patch, path, onClose])
   return (
     <Dialog
       id={'confirm-clear-table-dialog'}

@@ -120,17 +120,17 @@ const RichTableInput: ComponentType<
                 patch={patch}
               />
             )}
-            {openConfirmClearDialog && (
-              <ConfirmClearTableDialog
-                open={openConfirmClearDialog}
-                onClose={handleCloseConfirmClearDialog}
-                patch={patch}
-                path={pathString}
-              />
-            )}
           </>
         )}
       </Suspense>
+      {openConfirmClearDialog && (
+        <ConfirmClearTableDialog
+          open={openConfirmClearDialog}
+          onClose={handleCloseConfirmClearDialog}
+          patch={patch}
+          path={pathString}
+        />
+      )}
       {/* DEBUG SWITCH*/}
       <Flex justify={'space-between'} align={'center'} gap={2} key={`debug-switch-${openDialog}`}>
         <Inline space={2}>
