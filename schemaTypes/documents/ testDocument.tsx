@@ -15,5 +15,10 @@ export default defineType({
       title: 'Rich Table',
       type: 'richTable',
     }),
+    defineField({
+      name: 'body',
+      title: 'Body',
+      type: 'body',
+    }),
   ],
 })
