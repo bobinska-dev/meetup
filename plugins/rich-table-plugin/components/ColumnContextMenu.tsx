@@ -8,6 +8,13 @@ import { PatchOperations } from '@sanity/types'
 import { RichTableType } from '../schemas/richTable.object'
 import { ColumnHeader } from '../schemas/columnHeader.object'
 import { RichTableCellType } from '../schemas/cell.object'
+import {
+  TbArrowBarLeft,
+  TbArrowBarRight,
+  TbColumnInsertLeft,
+  TbColumnInsertRight,
+  TbColumnRemove
+} from 'react-icons/tb'
 
 interface ColumnMenuButtonProps {
   columnIndex: number
@@ -243,28 +250,37 @@ const ColumnContextMenu: ComponentType<ColumnMenuButtonProps> = (props) => {
       menu={
         <Menu>
           <MenuItem
-            text="Add column to the left"
+            text="Add column (left)"
             onClick={() => handleAddColumn('left')}
             disabled={readOnly}
+            icon={TbColumnInsertLeft}
           />
           <MenuItem
-            text="Add column to the right"
+            text="Add column (right)"
             onClick={() => handleAddColumn('right')}
             disabled={readOnly}
+            icon={TbColumnInsertRight}
           />
           <MenuDivider />
           <MenuItem
-            text="Move column <-"
+            text="Move column (left)" //"Move column <-"
             onClick={() => handleMoveColumn('left')}
             disabled={readOnly || columnIndex === 0}
+            icon={TbArrowBarLeft}
           />
           <MenuItem
-            text="Move column ->"
+            text="Move column (right)" // "Move column ->"
             onClick={() => handleMoveColumn('right')}
             disabled={readOnly || columnIndex - columnCount === -1}
+            icon={TbArrowBarRight}
           />
           <MenuDivider />
-          <MenuItem text="Delete column" onClick={handleDeleteColumn} disabled={readOnly} />
+          <MenuItem
+            text="Remove column"
+            onClick={handleDeleteColumn}
+            disabled={readOnly}
+            icon={TbColumnRemove}
+          />
         </Menu>
       }
       popover={{ placement: 'right', portal: true }}
