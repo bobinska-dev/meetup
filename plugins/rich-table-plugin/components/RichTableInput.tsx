@@ -1,13 +1,7 @@
-import { ExpandIcon } from '@sanity/icons'
+import { ExpandIcon, ResetIcon } from '@sanity/icons'
 import { Box, Button, Flex, Inline, Stack, Switch, Text, Tooltip } from '@sanity/ui'
 import { ChangeEvent, ComponentType, Suspense, useCallback, useState } from 'react'
-import {
-  getPublishedId,
-  ObjectInputProps,
-  pathToString,
-  useDocumentOperation,
-  useFormValue,
-} from 'sanity'
+import { getPublishedId, ObjectInputProps, pathToString, useDocumentOperation, useFormValue } from 'sanity'
 
 import { useToggleTitles } from '../hooks/useToggleTitles'
 import { RichTableType } from '../schemas/richTable.object'
@@ -15,6 +9,7 @@ import ExpandedTableDialog from './ExpandedTableDialog'
 import InitialiseTable from './InitialiseTable'
 import LoadingIndicator from './LoadingIndicator'
 import Table from './Table'
+import ConfirmClearTableDialog from './ConfirmClearTableDialog'
 
 // TODO: read only for new documents that do not yet exist OR way to detect if document has yet to be created
 const RichTableInput: ComponentType<
@@ -35,6 +30,10 @@ const RichTableInput: ComponentType<
   const [openDialog, setOpenDialog] = useState(false)
   const handleOpen = useCallback(() => setOpenDialog(true), [])
   const handleClose = useCallback(() => setOpenDialog(false), [])
+  // * Confirm clear table dialog
+  const [openConfirmClearDialog, setOpenConfirmClearDialog] = useState(false)
+  const handleOpenConfirmClearDialog = useCallback(() => setOpenConfirmClearDialog(true), [])
+  const handleCloseConfirmClearDialog = useCallback(() => setOpenConfirmClearDialog(false), [])
 
   const { hasColumnTitles, hasRowTitles } = props.value || {}
   const { toggleColumnTitles, toggleRowTitles } = useToggleTitles(
@@ -59,7 +58,25 @@ const RichTableInput: ComponentType<
           <>
             <Box>
               {/* EXPAND TABLE BUTTON */}
-              <Flex justify={'flex-end'}>
+              <Flex justify={'flex-end'} gap={4}>
+                <Tooltip
+                  content={
+                    <Box>
+                      <Text size={1}>Clear table</Text>
+                    </Box>
+                  }
+                  portal
+                >
+                  <Button
+                    iconRight={ResetIcon}
+                    onClick={handleOpenConfirmClearDialog}
+                    mode={'bleed'}
+                    fontSize={0}
+                    text={'Clear table'}
+                    muted
+                    disabled={props.readOnly}
+                  />
+                </Tooltip>
                 <Tooltip
                   content={
                     <Box>
@@ -101,6 +118,14 @@ const RichTableInput: ComponentType<
                 isInDialog={true}
                 handleClose={handleClose}
                 patch={patch}
+              />
+            )}
+            {openConfirmClearDialog && (
+              <ConfirmClearTableDialog
+                open={openConfirmClearDialog}
+                onClose={handleCloseConfirmClearDialog}
+                patch={patch}
+                path={pathString}
               />
             )}
           </>
